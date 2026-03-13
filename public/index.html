@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNS Quote Calculator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; color: #222; min-height: 100vh; }
+
+  .header { background: #1a2f4a; color: white; padding: 16px 32px; display: flex; align-items: center; gap: 16px; }
+  .header img { height: 40px; }
+  .header h1 { font-size: 18px; font-weight: 600; }
+  .header span { font-size: 13px; opacity: 0.6; margin-left: 8px; }
+
+  .layout { display: grid; grid-template-columns: 420px 1fr; gap: 0; min-height: calc(100vh - 60px); }
+
+  .sidebar { background: white; border-right: 1px solid #e0e0e0; padding: 24px; overflow-y: auto; }
+  .main { padding: 24px; overflow-y: auto; }
+
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin-bottom: 14px; }
+
+  .section { margin-bottom: 24px; }
+
+  label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; }
+  input, select { width: 100%; padding: 9px 12px; border: 1px solid #d0d0d0; border-radius: 6px; font-size: 14px; background: white; color: #222; outline: none; }
+  input:focus, select:focus { border-color: #1a2f4a; box-shadow: 0 0 0 3px rgba(26,47,74,0.1); }
+  .field { margin-bottom: 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .product-card { border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; transition: border-color 0.15s; background: white; }
+  .product-card:hover { border-color: #1a2f4a; }
+  .product-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+  .product-info { flex: 1; }
+  .product-info .sku { font-size: 11px; color: #888; font-weight: 600; }
+  .product-info .name { font-size: 14px; font-weight: 500; margin: 2px 0 6px; }
+  .product-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-size: 11px; padding: 3px 8px; border-radius: 20px; border: 1px solid #d0d0d0; cursor: pointer; color: #555; background: white; transition: all 0.1s; white-space: nowrap; }
+  .chip:hover { border-color: #1a2f4a; color: #1a2f4a; }
+  .chip.active { background: #1a2f4a; color: white; border-color: #1a2f4a; }
+
+  .qty-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .qty-row label { margin: 0; font-size: 12px; color: #888; white-space: nowrap; }
+  .qty-row input { width: 60px; text-align: center; }
+  .qty-row .price-preview { font-size: 14px; font-weight: 600; color: #1a2f4a; margin-left: auto; }
+
+  .add-btn { background: #1a2f4a; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+  .add-btn:hover { background: #243f63; }
+  .add-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+  /* Quote panel */
+  .quote-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+  .line-item { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: grid; grid-template-columns: 60px 1fr auto auto; gap: 12px; align-items: center; }
+  .line-item img { width: 56px; height: 56px; object-fit: cover; border-radius: 5px; }
+  .line-item .li-name { font-size: 14px; font-weight: 500; }
+  .line-item .li-detail { font-size: 12px; color: #888; margin-top: 2px; }
+  .line-item .li-price { font-size: 14px; font-weight: 600; text-align: right; white-space: nowrap; }
+  .line-item .li-unit { font-size: 11px; color: #aaa; text-align: right; }
+  .remove-btn { background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer; padding: 4px; line-height: 1; }
+  .remove-btn:hover { color: #e24b4a; }
+
+  .total-bar { background: #1a2f4a; color: white; border-radius: 10px; padding: 16px 20px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .total-bar .label { font-size: 13px; opacity: 0.7; }
+  .total-bar .amount { font-size: 26px; font-weight: 700; }
+  .total-bar .items { font-size: 12px; opacity: 0.6; margin-top: 2px; }
+
+  .action-row { display: flex; gap: 12px; margin-top: 16px; }
+  .btn-primary { background: #c8960c; color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 15px; font-weight: 600; cursor: pointer; flex: 1; }
+  .btn-primary:hover { background: #b07d0a; }
+  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+  .btn-secondary { background: white; color: #1a2f4a; border: 1px solid #1a2f4a; border-radius: 8px; padding: 12px 20px; font-size: 14px; cursor: pointer; }
+  .btn-secondary:hover { background: #f0f4f8; }
+
+  /* Settings toggle */
+  .settings-bar { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+  .settings-toggle { font-size: 13px; color: #666; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .settings-content { display: none; margin-top: 12px; }
+  .settings-content.open { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .settings-content label { font-size: 12px; }
+  .settings-content input { padding: 7px 10px; font-size: 13px; }
+
+  .tab-bar { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+  .tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: white; color: #666; border: none; border-right: 1px solid #e0e0e0; transition: all 0.1s; }
+  .tab:last-child { border-right: none; }
+  .tab.active { background: #1a2f4a; color: white; }
+
+  .category-section { margin-bottom: 20px; }
+  .category-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f0f0f0; }
+
+  .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+  .tag-confirm { background: #fff3cd; color: #856404; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid #e0e0e0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="logo_sm.png" alt="True North Steelworks" onerror="this.style.display='none'">
+  <div>
+    <h1>Quote Calculator <span>Internal Tool</span></h1>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT: Customer + Products -->
+  <div class="sidebar">
+
+    <!-- Customer Info -->
+    <div class="section">
+      <h2>Customer</h2>
+      <div class="field"><label>Name</label><input id="cust-name" type="text" placeholder="e.g. Shannon Waddell"></div>
+      <div class="grid2">
+        <div class="field"><label>Email</label><input id="cust-email" type="email" placeholder="email@example.com"></div>
+        <div class="field"><label>Phone</label><input id="cust-phone" type="tel" placeholder="(555) 000-0000"></div>
+      </div>
+      <div class="field"><label>Address / Location</label><input id="cust-addr" type="text" placeholder="City, Province"></div>
+      <div class="field"><label>Notes</label><input id="cust-notes" type="text" placeholder="e.g. 3.5m stalls, black finish"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="settings-bar">
+      <div class="settings-toggle" onclick="toggleSettings()">
+        <span>Pricing assumptions</span><span id="settings-arrow">▼</span>
+      </div>
+      <div class="settings-content" id="settings-content">
+        <div><label>USD→CAD Rate</label><input id="fx" type="number" value="1.38" step="0.01" oninput="refreshPreviews()"></div>
+        <div><label>Duty + Freight</label><input id="df" type="number" value="1.35" step="0.01" oninput="refreshPreviews()"></div>
+        <div><label>Margin %</label><input id="margin" type="number" value="50" step="1" oninput="refreshPreviews()"></div>
+      </div>
+    </div>
+
+    <!-- Product Catalog -->
+    <div class="section">
+      <h2>Add Products</h2>
+
+      <div class="tab-bar">
+        <button class="tab active" onclick="showCat('fronts',this)">Swing Fronts</button>
+        <button class="tab" onclick="showCat('sides',this)">Side Panels</button>
+      </div>
+
+      <div id="cat-fronts">
+        <div class="category-title">Swing Front Panels — E-Series</div>
+        <div id="products-fronts"></div>
+      </div>
+      <div id="cat-sides" style="display:none">
+        <div class="category-title">Side / Partition Panels — D-Series</div>
+        <div id="products-sides"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Quote -->
+  <div class="main">
+    <div class="quote-header">
+      <h2>Quote</h2>
+      <button class="btn-secondary" onclick="clearQuote()" style="padding:6px 14px;font-size:13px;">Clear all</button>
+    </div>
+
+    <div id="quote-body">
+      <div class="empty-state">
+        <div class="icon">📋</div>
+        <div>Select products from the left to build a quote</div>
+      </div>
+    </div>
+
+    <div id="quote-footer" style="display:none">
+      <div class="total-bar">
+        <div>
+          <div class="label">Quote Total (CAD, incl. tax est.)</div>
+          <div class="amount" id="grand-total">$0.00</div>
+          <div class="items" id="item-count"></div>
+        </div>
+        <div style="text-align:right">
+          <div class="label">Valid 30 days</div>
+          <div style="font-size:12px;opacity:0.5;margin-top:4px" id="quote-date"></div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn-primary" onclick="generatePDF()">⬇ Download Quote PDF</button>
+        <button class="btn-secondary" onclick="clearQuote()">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script>
+// ── Pricing Data ──────────────────────────────────────────────────────────────
+const PRODUCTS = [
+  // Swing Fronts
+  { sku:'TNS-STL-101', cat:'fronts', name:'Swing door, feed window, vertical bars', jh:'E-01', img:'products/TNS-STL-101.jpg',
+    sizes:{'3.0m':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'3.5m':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'4.0m':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
+  { sku:'TNS-STL-102', cat:'fronts', name:'Swing door, straight top bars', jh:'E-02', img:'products/TNS-STL-102.jpg',
+    sizes:{'3.0m':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'3.5m':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'4.0m':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
+  { sku:'TNS-STL-106', cat:'fronts', name:'Compact swing door', jh:'E-04', img:'products/TNS-STL-106.jpg',
+    sizes:{'3.0m':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'3.5m':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'4.0m':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
+  { sku:'TNS-STL-107', cat:'fronts', name:'L-shape / corner unit', jh:'E-05', img:'products/TNS-STL-107.jpg',
+    sizes:{'3.0m':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'3.5m':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'4.0m':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
+  { sku:'TNS-STL-104', cat:'fronts', name:'Wave / curved top bars', jh:'E-06', img:'products/TNS-STL-104.jpg',
+    sizes:{'3.0m':{'No Infill':578,'20mm Bamboo':621,'28mm Bamboo':643},'3.5m':{'No Infill':606,'20mm Bamboo':655,'28mm Bamboo':679},'4.0m':{'No Infill':635,'20mm Bamboo':693,'28mm Bamboo':721}} },
+  { sku:'TNS-STL-103', cat:'fronts', name:'Arched top, brass finials', jh:'E-07', img:'products/TNS-STL-103.jpg',
+    sizes:{'3.0m':{'No Infill':596,'20mm Bamboo':639,'28mm Bamboo':696},'3.5m':{'No Infill':620,'20mm Bamboo':667,'28mm Bamboo':730},'4.0m':{'No Infill':657,'20mm Bamboo':712,'28mm Bamboo':784}} },
+  { sku:'TNS-STL-105', cat:'fronts', name:'Full front, double finials', jh:'E-09', img:'products/TNS-STL-105.jpg',
+    sizes:{'3.0m':{'No Infill':596,'20mm Bamboo':639,'28mm Bamboo':696},'3.5m':{'No Infill':620,'20mm Bamboo':667,'28mm Bamboo':730},'4.0m':{'No Infill':657,'20mm Bamboo':712,'28mm Bamboo':784}} },
+  // Side Panels
+  { sku:'TNS-STL-201', cat:'sides', name:'Side panel — bars top, bamboo bottom', jh:'D-01', img:'products/TNS-STL-201.jpg',
+    sizes:{'3.0m':{'No Infill':416,'20mm Bamboo':461,'28mm Bamboo':486},'3.5m':{'No Infill':448,'20mm Bamboo':504,'28mm Bamboo':535},'4.0m':{'No Infill':482,'20mm Bamboo':545,'28mm Bamboo':580}} },
+  { sku:'TNS-STL-202', cat:'sides', name:'Side panel — straight bars', jh:'D-02', img:'products/TNS-STL-202.jpg',
+    sizes:{'3.0m':{'No Infill':502,'20mm Bamboo':596,'28mm Bamboo':644},'3.5m':{'No Infill':550,'20mm Bamboo':662,'28mm Bamboo':717},'4.0m':{'No Infill':598,'20mm Bamboo':727,'28mm Bamboo':792}} },
+  { sku:'TNS-STL-203', cat:'sides', name:'Side panel — arched top', jh:'D-03', img:'products/TNS-STL-203.jpg', confirm:true,
+    sizes:{'3.0m':{'No Infill':503,'20mm Bamboo':531,'28mm Bamboo':597},'3.5m':{'No Infill':566,'20mm Bamboo':600,'28mm Bamboo':635},'4.0m':{'No Infill':598,'20mm Bamboo':641,'28mm Bamboo':679}} },
+  { sku:'TNS-STL-204', cat:'sides', name:'Side panel — open bar', jh:'D-04', img:'products/TNS-STL-204.jpg', confirm:true,
+    sizes:{'3.0m':{'No Infill':539,'20mm Bamboo':609,'28mm Bamboo':648},'3.5m':{'No Infill':605,'20mm Bamboo':644,'28mm Bamboo':685},'4.0m':{'No Infill':642,'20mm Bamboo':683,'28mm Bamboo':729}} },
+  { sku:'TNS-STL-301', cat:'sides', name:'Side panel — all-black solid', jh:'D-05', img:'products/TNS-STL-301.jpg', confirm:true,
+    sizes:{'3.0m':{'No Infill':473,'20mm Bamboo':554,'28mm Bamboo':594},'3.5m':{'No Infill':521,'20mm Bamboo':621,'28mm Bamboo':667},'4.0m':{'No Infill':569,'20mm Bamboo':686,'28mm Bamboo':745}} },
+  { sku:'TNS-STL-302', cat:'sides', name:'Side panel — two-tone', jh:'D-06', img:'products/TNS-STL-302.jpg', confirm:true,
+    sizes:{'3.0m':{'No Infill':438,'20mm Bamboo':497,'28mm Bamboo':529},'3.5m':{'No Infill':471,'20mm Bamboo':540,'28mm Bamboo':578},'4.0m':{'No Infill':504,'20mm Bamboo':581,'28mm Bamboo':623}} },
+];
+
+// State
+let quoteLines = [];
+let selectedConfig = {}; // per sku: { size, infill, qty }
+
+function getSettings() {
+  return {
+    fx: parseFloat(document.getElementById('fx').value)||1.38,
+    df: parseFloat(document.getElementById('df').value)||1.35,
+    margin: parseFloat(document.getElementById('margin').value)||50,
+  };
+}
+
+function calcRetail(exwUSD) {
+  const { fx, df, margin } = getSettings();
+  return Math.round(exwUSD * fx * df / (1 - margin/100));
+}
+
+// ── Render product cards ──────────────────────────────────────────────────────
+function renderProducts() {
+  ['fronts','sides'].forEach(cat => {
+    const el = document.getElementById(`products-${cat}`);
+    el.innerHTML = '';
+    PRODUCTS.filter(p => p.cat === cat).forEach(p => {
+      const cfg = selectedConfig[p.sku] || { size:'3.5m', infill:'28mm Bamboo', qty:1 };
+      selectedConfig[p.sku] = cfg;
+      const exw = p.sizes[cfg.size]?.[cfg.infill] || 0;
+      const retail = exw ? calcRetail(exw) : 0;
+
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.id = `card-${p.sku}`;
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.name}" onerror="this.style.background='#eee';this.src=''">
+        <div class="product-info">
+          <div class="sku">${p.sku} · ${p.jh} ${p.confirm ? '<span class="tag tag-confirm">Pending confirm</span>' : ''}</div>
+          <div class="name">${p.name}</div>
+          <div class="product-options" id="sizes-${p.sku}">
+            ${Object.keys(p.sizes).map(s => `<span class="chip ${s===cfg.size?'active':''}" onclick="setSize('${p.sku}','${s}',this)">${s}</span>`).join('')}
+          </div>
+          <div class="product-options" style="margin-top:6px" id="infills-${p.sku}">
+            ${Object.keys(p.sizes[cfg.size]).map(i => `<span class="chip ${i===cfg.infill?'active':''}" onclick="setInfill('${p.sku}','${i}',this)">${i}</span>`).join('')}
+          </div>
+          <div class="qty-row">
+            <label>Qty</label>
+            <input type="number" min="1" value="${cfg.qty}" style="width:55px" oninput="setQty('${p.sku}',this.value)">
+            <span class="price-preview" id="price-${p.sku}">${retail ? '$'+retail.toLocaleString('en-CA')+' CAD/ea' : '—'}</span>
+            <button class="add-btn" onclick="addLine('${p.sku}')">+ Add</button>
+          </div>
+        </div>
+      `;
+      el.appendChild(card);
+    });
+  });
+}
+
+function setSize(sku, size, el) {
+  selectedConfig[sku].size = size;
+  // Reset infill to first available
+  const p = PRODUCTS.find(x => x.sku === sku);
+  const infills = Object.keys(p.sizes[size]);
+  if (!infills.includes(selectedConfig[sku].infill)) selectedConfig[sku].infill = infills[0];
+  // Update chips
+  document.querySelectorAll(`#sizes-${sku} .chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  // Re-render infill chips
+  document.getElementById(`infills-${sku}`).innerHTML =
+    infills.map(i => `<span class="chip ${i===selectedConfig[sku].infill?'active':''}" onclick="setInfill('${sku}','${i}',this)">${i}</span>`).join('');
+  updatePreview(sku);
+}
+
+function setInfill(sku, infill, el) {
+  selectedConfig[sku].infill = infill;
+  document.querySelectorAll(`#infills-${sku} .chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  updatePreview(sku);
+}
+
+function setQty(sku, val) {
+  selectedConfig[sku].qty = parseInt(val)||1;
+}
+
+function updatePreview(sku) {
+  const p = PRODUCTS.find(x => x.sku === sku);
+  const cfg = selectedConfig[sku];
+  const exw = p.sizes[cfg.size]?.[cfg.infill]||0;
+  const retail = exw ? calcRetail(exw) : 0;
+  document.getElementById(`price-${sku}`).textContent = retail ? '$'+retail.toLocaleString('en-CA')+' CAD/ea' : '—';
+}
+
+function refreshPreviews() {
+  PRODUCTS.forEach(p => updatePreview(p.sku));
+  renderQuote();
+}
+
+function showCat(cat, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('cat-fronts').style.display = cat==='fronts' ? '' : 'none';
+  document.getElementById('cat-sides').style.display = cat==='sides' ? '' : 'none';
+}
+
+function toggleSettings() {
+  const c = document.getElementById('settings-content');
+  const open = c.classList.toggle('open');
+  document.getElementById('settings-arrow').textContent = open ? '▲' : '▼';
+}
+
+// ── Quote lines ───────────────────────────────────────────────────────────────
+function addLine(sku) {
+  const p = PRODUCTS.find(x => x.sku === sku);
+  const cfg = selectedConfig[sku];
+  const exw = p.sizes[cfg.size]?.[cfg.infill]||0;
+  if (!exw) return;
+  const retail = calcRetail(exw);
+  quoteLines.push({
+    id: Date.now(),
+    sku: p.sku, name: p.name, jh: p.jh, img: p.img,
+    size: cfg.size, infill: cfg.infill, qty: cfg.qty,
+    unitPrice: retail,
+    total: retail * cfg.qty,
+  });
+  renderQuote();
+}
+
+function removeLine(id) {
+  quoteLines = quoteLines.filter(l => l.id !== id);
+  renderQuote();
+}
+
+function clearQuote() {
+  quoteLines = [];
+  renderQuote();
+}
+
+function renderQuote() {
+  const body = document.getElementById('quote-body');
+  const footer = document.getElementById('quote-footer');
+
+  if (quoteLines.length === 0) {
+    body.innerHTML = `<div class="empty-state"><div class="icon">📋</div><div>Select products from the left to build a quote</div></div>`;
+    footer.style.display = 'none';
+    return;
+  }
+
+  body.innerHTML = quoteLines.map(l => `
+    <div class="line-item">
+      <img src="${l.img}" alt="${l.name}" onerror="this.style.background='#eee';this.src=''">
+      <div>
+        <div class="li-name">${l.name}</div>
+        <div class="li-detail">${l.sku} · ${l.jh} · ${l.size} · ${l.infill} · Qty ${l.qty}</div>
+      </div>
+      <div>
+        <div class="li-price">$${l.total.toLocaleString('en-CA')}</div>
+        <div class="li-unit">$${l.unitPrice.toLocaleString('en-CA')} ea</div>
+      </div>
+      <button class="remove-btn" onclick="removeLine(${l.id})">×</button>
+    </div>
+  `).join('');
+
+  const grand = quoteLines.reduce((s,l) => s+l.total, 0);
+  const totalQty = quoteLines.reduce((s,l) => s+l.qty, 0);
+  document.getElementById('grand-total').textContent = '$'+grand.toLocaleString('en-CA')+' CAD';
+  document.getElementById('item-count').textContent = `${totalQty} unit${totalQty!==1?'s':''} · ${quoteLines.length} line item${quoteLines.length!==1?'s':''}`;
+  document.getElementById('quote-date').textContent = 'Prepared '+new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+  footer.style.display = 'block';
+}
+
+// ── PDF Generation ────────────────────────────────────────────────────────────
+async function generatePDF() {
+  const btn = document.querySelector('.btn-primary');
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+
+  try {
+    const { PDFDocument, rgb, StandardFonts, PageSizes } = PDFLib;
+    const doc = await PDFDocument.create();
+
+    const fontR = await doc.embedFont(StandardFonts.Helvetica);
+    const fontB = await doc.embedFont(StandardFonts.HelveticaBold);
+
+    const navy = rgb(26/255, 47/255, 74/255);
+    const gold = rgb(200/255, 150/255, 12/255);
+    const light = rgb(0.96, 0.97, 0.98);
+    const grey = rgb(0.5, 0.5, 0.5);
+    const white = rgb(1,1,1);
+    const black = rgb(0,0,0);
+
+    const cust = {
+      name: document.getElementById('cust-name').value || 'Valued Customer',
+      email: document.getElementById('cust-email').value,
+      phone: document.getElementById('cust-phone').value,
+      addr: document.getElementById('cust-addr').value,
+      notes: document.getElementById('cust-notes').value,
+    };
+
+    const grand = quoteLines.reduce((s,l) => s+l.total, 0);
+    const totalQty = quoteLines.reduce((s,l) => s+l.qty, 0);
+    const dateStr = new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+    const quoteNum = 'TNS-' + Date.now().toString().slice(-6);
+
+    // Load logo
+    let logoImg = null;
+    try {
+      const logoResp = await fetch('logo_sm.png');
+      const logoBytes = await logoResp.arrayBuffer();
+      logoImg = await doc.embedPng(logoBytes);
+    } catch(e) {}
+
+    // Load product images
+    const imgCache = {};
+    for (const line of quoteLines) {
+      if (!imgCache[line.sku]) {
+        try {
+          const r = await fetch(line.img);
+          const bytes = await r.arrayBuffer();
+          imgCache[line.sku] = await doc.embedJpg(bytes);
+        } catch(e) {}
+      }
+    }
+
+    // ── Page 1: Cover / Header ──
+    const W = 612, H = 792;
+
+    const addPage = () => {
+      const p = doc.addPage([W, H]);
+      // Header bar
+      p.drawRectangle({ x:0, y:H-70, width:W, height:70, color:navy });
+      // Logo
+      if (logoImg) {
+        const lw = 80, lh = lw * (logoImg.height/logoImg.width);
+        p.drawImage(logoImg, { x:24, y:H-56, width:lw, height:lh });
+      }
+      // Company name in header
+      p.drawText('True North Steelworks', { x:114, y:H-28, size:14, font:fontB, color:white });
+      p.drawText('truenorthsteelworks.com  ·  sales@truenorthsteelworks.com', { x:114, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
+      // Quote # top right
+      p.drawText(quoteNum, { x:W-120, y:H-28, size:11, font:fontB, color:gold });
+      p.drawText(dateStr, { x:W-130, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
+      // Gold accent line
+      p.drawRectangle({ x:0, y:H-73, width:W, height:3, color:gold });
+      return p;
+    };
+
+    let page = addPage();
+    let y = H - 100;
+
+    // Quote title
+    page.drawText('CUSTOM STALL QUOTE', { x:24, y, size:22, font:fontB, color:navy });
+    y -= 28;
+    page.drawText('Thank you for your interest in True North Steelworks custom horse stalls.', { x:24, y, size:10, font:fontR, color:grey });
+    y -= 30;
+
+    // Customer block
+    page.drawRectangle({ x:24, y:y-70, width:W-48, height:80, color:light });
+    page.drawRectangle({ x:24, y:y+6, width:4, height:80, color:navy });
+    page.drawText('PREPARED FOR', { x:36, y:y-4, size:8, font:fontB, color:navy });
+    page.drawText(cust.name, { x:36, y:y-18, size:14, font:fontB, color:black });
+    let cx = 36;
+    if (cust.addr) { page.drawText(cust.addr, { x:cx, y:y-32, size:10, font:fontR, color:grey }); }
+    if (cust.email) { page.drawText(cust.email, { x:cx, y:y-44, size:10, font:fontR, color:grey }); }
+    if (cust.phone) { page.drawText(cust.phone, { x:cx+200, y:y-44, size:10, font:fontR, color:grey }); }
+    if (cust.notes) { page.drawText('Notes: '+cust.notes, { x:cx, y:y-58, size:9, font:fontR, color:grey }); }
+    y -= 90;
+
+    // Line items header
+    page.drawRectangle({ x:24, y:y-20, width:W-48, height:24, color:navy });
+    page.drawText('PRODUCT', { x:32, y:y-14, size:8, font:fontB, color:white });
+    page.drawText('SIZE', { x:310, y:y-14, size:8, font:fontB, color:white });
+    page.drawText('INFILL', { x:365, y:y-14, size:8, font:fontB, color:white });
+    page.drawText('QTY', { x:440, y:y-14, size:8, font:fontB, color:white });
+    page.drawText('UNIT', { x:470, y:y-14, size:8, font:fontB, color:white });
+    page.drawText('TOTAL', { x:525, y:y-14, size:8, font:fontB, color:white });
+    y -= 26;
+
+    // Line items
+    for (let i=0; i < quoteLines.length; i++) {
+      const l = quoteLines[i];
+      const rowH = 70;
+
+      if (y - rowH < 80) {
+        // Footer on current page
+        drawFooter(page, W, H, fontR, grey, gold);
+        page = addPage();
+        y = H - 100;
+        // Re-draw column headers
+        page.drawRectangle({ x:24, y:y-20, width:W-48, height:24, color:navy });
+        page.drawText('PRODUCT', { x:32, y:y-14, size:8, font:fontB, color:white });
+        page.drawText('SIZE', { x:310, y:y-14, size:8, font:fontB, color:white });
+        page.drawText('INFILL', { x:365, y:y-14, size:8, font:fontB, color:white });
+        page.drawText('QTY', { x:440, y:y-14, size:8, font:fontB, color:white });
+        page.drawText('UNIT', { x:470, y:y-14, size:8, font:fontB, color:white });
+        page.drawText('TOTAL', { x:525, y:y-14, size:8, font:fontB, color:white });
+        y -= 26;
+      }
+
+      // Row background
+      if (i%2===0) page.drawRectangle({ x:24, y:y-rowH, width:W-48, height:rowH, color:rgb(0.98,0.98,0.99) });
+
+      // Product image
+      const pimg = imgCache[l.sku];
+      if (pimg) {
+        const ih = 56, iw = ih * (pimg.width/pimg.height);
+        page.drawImage(pimg, { x:28, y:y-rowH+7, width:Math.min(iw,56), height:ih });
+      }
+
+      // Text
+      page.drawText(l.name, { x:92, y:y-16, size:10, font:fontB, color:black, maxWidth:210 });
+      page.drawText(`${l.sku}  ·  ${l.jh}`, { x:92, y:y-28, size:8, font:fontR, color:grey });
+      page.drawText(l.size, { x:310, y:y-20, size:10, font:fontR, color:black });
+      page.drawText(l.infill, { x:365, y:y-20, size:10, font:fontR, color:black });
+      page.drawText(String(l.qty), { x:448, y:y-20, size:10, font:fontR, color:black });
+      page.drawText('$'+l.unitPrice.toLocaleString('en-CA'), { x:463, y:y-20, size:10, font:fontR, color:black });
+      // Total right-aligned
+      const totalStr = '$'+l.total.toLocaleString('en-CA');
+      const totalW = fontB.widthOfTextAtSize(totalStr, 11);
+      page.drawText(totalStr, { x:W-24-totalW, y:y-20, size:11, font:fontB, color:navy });
+
+      // Divider
+      page.drawLine({ start:{x:24,y:y-rowH}, end:{x:W-24,y:y-rowH}, thickness:0.5, color:rgb(0.88,0.88,0.88) });
+      y -= rowH;
+    }
+
+    y -= 10;
+
+    // Totals box
+    const tboxH = 70;
+    if (y - tboxH < 80) {
+      drawFooter(page, W, H, fontR, grey, gold);
+      page = addPage();
+      y = H - 100;
+    }
+
+    page.drawRectangle({ x:W-220, y:y-tboxH, width:196, height:tboxH, color:navy });
+    const totalQtyStr = `${totalQty} unit${totalQty!==1?'s':''}`;
+    page.drawText('QUOTE TOTAL (CAD)', { x:W-210, y:y-18, size:8, font:fontB, color:rgb(0.7,0.8,0.9) });
+    const grandStr = '$'+grand.toLocaleString('en-CA');
+    const grandW = fontB.widthOfTextAtSize(grandStr, 20);
+    page.drawText(grandStr, { x:W-24-grandW, y:y-38, size:20, font:fontB, color:white });
+    page.drawText(totalQtyStr, { x:W-210, y:y-54, size:9, font:fontR, color:rgb(0.6,0.7,0.8) });
+    page.drawRectangle({ x:W-220, y:y-tboxH, width:4, height:tboxH, color:gold });
+
+    y -= tboxH + 20;
+
+    // Terms
+    if (y > 100) {
+      const terms = [
+        'All prices in Canadian dollars (CAD). Quote valid for 30 days from date of issue.',
+        'Prices are EXW Ontario — delivery and installation quoted separately.',
+        'Custom orders require 50% deposit. Lead time 8–12 weeks from order confirmation.',
+        'All steel stall components are powder coated and engineered for Canadian climate conditions.',
+      ];
+      page.drawText('TERMS & CONDITIONS', { x:24, y, size:8, font:fontB, color:navy });
+      y -= 14;
+      terms.forEach(t => {
+        page.drawText('·  '+t, { x:24, y, size:8, font:fontR, color:grey, maxWidth:W-48 });
+        y -= 13;
+      });
+    }
+
+    drawFooter(page, W, H, fontR, grey, gold);
+
+    // Save
+    const bytes = await doc.save();
+    const blob = new Blob([bytes], { type:'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `TNS_Quote_${cust.name.replace(/\s+/g,'_')}_${quoteNum}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+  } catch(e) {
+    alert('PDF generation failed: '+e.message);
+    console.error(e);
+  }
+
+  btn.textContent = '⬇ Download Quote PDF';
+  btn.disabled = false;
+}
+
+function drawFooter(page, W, H, fontR, grey, gold) {
+  page.drawRectangle({ x:0, y:0, width:W, height:36, color:rgb(0.96,0.97,0.98) });
+  page.drawRectangle({ x:0, y:36, width:W, height:1, color:rgb(0.85,0.85,0.85) });
+  page.drawText('True North Steelworks  ·  truenorthsteelworks.com  ·  sales@truenorthsteelworks.com', {
+    x:24, y:14, size:8, font:fontR, color:grey
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.getElementById('quote-date').textContent = new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+renderProducts();
+</script>
+</body>
+</html>
