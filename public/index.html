@@ -506,7 +506,7 @@ async function generatePDF() {
 
       if (y - rowH < 80) {
         // Footer on current page
-        drawFooter(page, W, H, fontR, grey, gold);
+        drawFooter(page, W, H, fontR, grey, gold, rgb);
         page = addPage();
         y = H - 100;
         // Re-draw column headers
@@ -552,7 +552,7 @@ async function generatePDF() {
     // Totals box
     const tboxH = 70;
     if (y - tboxH < 80) {
-      drawFooter(page, W, H, fontR, grey, gold);
+      drawFooter(page, W, H, fontR, grey, gold, rgb);
       page = addPage();
       y = H - 100;
     }
@@ -584,7 +584,7 @@ async function generatePDF() {
       });
     }
 
-    drawFooter(page, W, H, fontR, grey, gold);
+    drawFooter(page, W, H, fontR, grey, gold, rgb);
 
     // Save
     const bytes = await doc.save();
@@ -605,7 +605,7 @@ async function generatePDF() {
   btn.disabled = false;
 }
 
-function drawFooter(page, W, H, fontR, grey, gold) {
+function drawFooter(page, W, H, fontR, grey, gold, rgb) {
   page.drawRectangle({ x:0, y:0, width:W, height:36, color:rgb(0.96,0.97,0.98) });
   page.drawRectangle({ x:0, y:36, width:W, height:1, color:rgb(0.85,0.85,0.85) });
   page.drawText('True North Steelworks  ·  truenorthsteelworks.com  ·  sales@truenorthsteelworks.com', {
