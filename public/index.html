@@ -424,6 +424,7 @@ async function generatePDF() {
     const totalQty = quoteLines.reduce((s,l) => s+l.qty, 0);
     const dateStr = new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
     const quoteNum = 'TNS-' + Date.now().toString().slice(-6);
+    const fmt = (n) => '$' + n.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     // Load logo
     let logoImg = null;
@@ -454,12 +455,17 @@ async function generatePDF() {
       p.drawRectangle({ x:0, y:H-70, width:W, height:70, color:navy });
       // Logo
       if (logoImg) {
-        const lw = 80, lh = lw * (logoImg.height/logoImg.width);
-        p.drawImage(logoImg, { x:24, y:H-56, width:lw, height:lh });
+        const maxH = 50, maxW = 80;
+        const aspect = logoImg.width / logoImg.height;
+        let lw = maxW, lh = lw / aspect;
+        if (lh > maxH) { lh = maxH; lw = lh * aspect; }
+        const lx = 24, ly = H - 70 + (70 - lh) / 2;
+        p.drawImage(logoImg, { x:lx, y:ly, width:lw, height:lh, opacity:0.85 });
       }
       // Company name in header
-      p.drawText('True North Steelworks', { x:114, y:H-28, size:14, font:fontB, color:white });
-      p.drawText('truenorthsteelworks.com  ·  sales@truenorthsteelworks.com', { x:114, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
+      const textX = logoImg ? 112 : 24;
+      p.drawText('True North Steelworks', { x:textX, y:H-28, size:14, font:fontB, color:white });
+      p.drawText('truenorthsteelworks.com  ·  sales@truenorthsteelworks.com', { x:textX, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
       // Quote # top right
       p.drawText(quoteNum, { x:W-120, y:H-28, size:11, font:fontB, color:gold });
       p.drawText(dateStr, { x:W-130, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
@@ -479,7 +485,7 @@ async function generatePDF() {
 
     // Customer block
     page.drawRectangle({ x:24, y:y-70, width:W-48, height:80, color:light });
-    page.drawRectangle({ x:24, y:y+6, width:4, height:80, color:navy });
+    page.drawRectangle({ x:24, y:y-70, width:4, height:80, color:navy });
     page.drawText('PREPARED FOR', { x:36, y:y-4, size:8, font:fontB, color:navy });
     page.drawText(cust.name, { x:36, y:y-18, size:14, font:fontB, color:black });
     let cx = 36;
@@ -536,9 +542,9 @@ async function generatePDF() {
       page.drawText(l.size, { x:310, y:y-20, size:10, font:fontR, color:black });
       page.drawText(l.infill, { x:365, y:y-20, size:10, font:fontR, color:black });
       page.drawText(String(l.qty), { x:448, y:y-20, size:10, font:fontR, color:black });
-      page.drawText('$'+l.unitPrice.toLocaleString('en-CA'), { x:463, y:y-20, size:10, font:fontR, color:black });
+      page.drawText(fmt(l.unitPrice), { x:463, y:y-20, size:10, font:fontR, color:black });
       // Total right-aligned
-      const totalStr = '$'+l.total.toLocaleString('en-CA');
+      const totalStr = fmt(l.total);
       const totalW = fontB.widthOfTextAtSize(totalStr, 11);
       page.drawText(totalStr, { x:W-24-totalW, y:y-20, size:11, font:fontB, color:navy });
 
@@ -560,7 +566,7 @@ async function generatePDF() {
     page.drawRectangle({ x:W-220, y:y-tboxH, width:196, height:tboxH, color:navy });
     const totalQtyStr = `${totalQty} unit${totalQty!==1?'s':''}`;
     page.drawText('QUOTE TOTAL (CAD)', { x:W-210, y:y-18, size:8, font:fontB, color:rgb(0.7,0.8,0.9) });
-    const grandStr = '$'+grand.toLocaleString('en-CA');
+    const grandStr = fmt(grand);
     const grandW = fontB.widthOfTextAtSize(grandStr, 20);
     page.drawText(grandStr, { x:W-24-grandW, y:y-38, size:20, font:fontB, color:white });
     page.drawText(totalQtyStr, { x:W-210, y:y-54, size:9, font:fontR, color:rgb(0.6,0.7,0.8) });
