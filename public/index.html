@@ -13,7 +13,7 @@
   .header h1 { font-size: 18px; font-weight: 600; }
   .header span { font-size: 13px; opacity: 0.6; margin-left: 8px; }
 
-  .layout { display: grid; grid-template-columns: 420px 1fr; gap: 0; min-height: calc(100vh - 60px); }
+  .layout { display: grid; grid-template-columns: 460px 1fr; gap: 0; min-height: calc(100vh - 60px); }
 
   .sidebar { background: white; border-right: 1px solid #e0e0e0; padding: 24px; overflow-y: auto; }
   .main { padding: 24px; overflow-y: auto; }
@@ -28,23 +28,57 @@
   .field { margin-bottom: 12px; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  .product-card { border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; transition: border-color 0.15s; background: white; }
-  .product-card:hover { border-color: #1a2f4a; }
-  .product-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
-  .product-info { flex: 1; }
-  .product-info .sku { font-size: 11px; color: #888; font-weight: 600; }
-  .product-info .name { font-size: 14px; font-weight: 500; margin: 2px 0 6px; }
-  .product-options { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip { font-size: 11px; padding: 3px 8px; border-radius: 20px; border: 1px solid #d0d0d0; cursor: pointer; color: #555; background: white; transition: all 0.1s; white-space: nowrap; }
+  /* Settings toggle */
+  .settings-bar { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+  .settings-toggle { font-size: 13px; color: #666; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .settings-content { display: none; margin-top: 12px; }
+  .settings-content.open { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .settings-content label { font-size: 12px; }
+  .settings-content input { padding: 7px 10px; font-size: 13px; }
+
+  /* Model tabs */
+  .tab-bar { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+  .tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: white; color: #666; border: none; border-right: 1px solid #e0e0e0; transition: all 0.1s; }
+  .tab:last-child { border-right: none; }
+  .tab.active { background: #1a2f4a; color: white; }
+  .tab.disabled { background: #f4f4f4; color: #bbb; cursor: not-allowed; }
+
+  /* Style selector */
+  .style-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .style-card { border: 2px solid #e0e0e0; border-radius: 8px; padding: 8px; cursor: pointer; transition: all 0.15s; text-align: center; background: white; }
+  .style-card:hover { border-color: #1a2f4a; }
+  .style-card.active { border-color: #1a2f4a; background: #f0f4f8; }
+  .style-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 6px; }
+  .style-card .style-name { font-size: 11px; font-weight: 500; color: #333; line-height: 1.3; }
+  .style-card .style-code { font-size: 10px; color: #999; margin-top: 2px; }
+  .style-card .style-delta { font-size: 10px; color: #888; margin-top: 2px; }
+
+  /* Option rows */
+  .option-section { margin-bottom: 14px; }
+  .option-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #888; margin-bottom: 8px; }
+  .chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-size: 12px; padding: 6px 12px; border-radius: 20px; border: 1px solid #d0d0d0; cursor: pointer; color: #555; background: white; transition: all 0.1s; white-space: nowrap; }
   .chip:hover { border-color: #1a2f4a; color: #1a2f4a; }
   .chip.active { background: #1a2f4a; color: white; border-color: #1a2f4a; }
+  .chip.disabled { background: #f4f4f4; color: #ccc; border-color: #eee; cursor: not-allowed; }
 
-  .qty-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+  .tag-confirm { background: #fff3cd; color: #856404; }
+  .tag-coming { background: #e8f0fe; color: #1967d2; }
+
+  /* Config panel */
+  .config-panel { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-top: 8px; }
+  .config-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .config-header img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; }
+  .config-header .config-title { font-size: 14px; font-weight: 600; color: #1a2f4a; }
+  .config-header .config-sub { font-size: 12px; color: #888; margin-top: 2px; }
+
+  .qty-row { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
   .qty-row label { margin: 0; font-size: 12px; color: #888; white-space: nowrap; }
   .qty-row input { width: 60px; text-align: center; }
-  .qty-row .price-preview { font-size: 14px; font-weight: 600; color: #1a2f4a; margin-left: auto; }
+  .qty-row .price-preview { font-size: 15px; font-weight: 600; color: #1a2f4a; margin-left: auto; }
 
-  .add-btn { background: #1a2f4a; color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+  .add-btn { background: #1a2f4a; color: white; border: none; border-radius: 6px; padding: 9px 18px; font-size: 13px; cursor: pointer; font-weight: 500; white-space: nowrap; }
   .add-btn:hover { background: #243f63; }
   .add-btn:disabled { background: #ccc; cursor: not-allowed; }
 
@@ -74,26 +108,9 @@
   .btn-secondary { background: white; color: #1a2f4a; border: 1px solid #1a2f4a; border-radius: 8px; padding: 12px 20px; font-size: 14px; cursor: pointer; }
   .btn-secondary:hover { background: #f0f4f8; }
 
-  /* Settings toggle */
-  .settings-bar { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
-  .settings-toggle { font-size: 13px; color: #666; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-  .settings-content { display: none; margin-top: 12px; }
-  .settings-content.open { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .settings-content label { font-size: 12px; }
-  .settings-content input { padding: 7px 10px; font-size: 13px; }
-
-  .tab-bar { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
-  .tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: white; color: #666; border: none; border-right: 1px solid #e0e0e0; transition: all 0.1s; }
-  .tab:last-child { border-right: none; }
-  .tab.active { background: #1a2f4a; color: white; }
-
-  .category-section { margin-bottom: 20px; }
   .category-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f0f0f0; }
 
-  .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
-  .tag-confirm { background: #fff3cd; color: #856404; }
-
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { border-right: none; border-bottom: 1px solid #e0e0e0; }
   }
@@ -128,12 +145,12 @@
     <!-- Settings -->
     <div class="settings-bar">
       <div class="settings-toggle" onclick="toggleSettings()">
-        <span>Pricing assumptions</span><span id="settings-arrow">▼</span>
+        <span>Pricing assumptions</span><span id="settings-arrow">&#9660;</span>
       </div>
       <div class="settings-content" id="settings-content">
-        <div><label>USD→CAD Rate</label><input id="fx" type="number" value="1.38" step="0.01" oninput="refreshPreviews()"></div>
-        <div><label>Duty + Freight</label><input id="df" type="number" value="1.35" step="0.01" oninput="refreshPreviews()"></div>
-        <div><label>Margin %</label><input id="margin" type="number" value="50" step="1" oninput="refreshPreviews()"></div>
+        <div><label>USD&rarr;CAD Rate</label><input id="fx" type="number" value="1.38" step="0.01" oninput="refreshAll()"></div>
+        <div><label>Duty + Freight</label><input id="df" type="number" value="1.35" step="0.01" oninput="refreshAll()"></div>
+        <div><label>Margin %</label><input id="margin" type="number" value="50" step="1" oninput="refreshAll()"></div>
       </div>
     </div>
 
@@ -142,18 +159,14 @@
       <h2>Add Products</h2>
 
       <div class="tab-bar">
-        <button class="tab active" onclick="showCat('fronts',this)">Swing Fronts</button>
-        <button class="tab" onclick="showCat('sides',this)">Side Panels</button>
+        <button class="tab active" onclick="showModel('swing',this)">Swing Fronts</button>
+        <button class="tab" onclick="showModel('sliding',this)">Sliding Fronts</button>
+        <button class="tab" onclick="showModel('partition',this)">Partitions</button>
       </div>
 
-      <div id="cat-fronts">
-        <div class="category-title">Swing Front Panels — E-Series</div>
-        <div id="products-fronts"></div>
-      </div>
-      <div id="cat-sides" style="display:none">
-        <div class="category-title">Side / Partition Panels — D-Series</div>
-        <div id="products-sides"></div>
-      </div>
+      <div id="model-swing"></div>
+      <div id="model-sliding" style="display:none"></div>
+      <div id="model-partition" style="display:none"></div>
     </div>
   </div>
 
@@ -166,7 +179,7 @@
 
     <div id="quote-body">
       <div class="empty-state">
-        <div class="icon">📋</div>
+        <div class="icon">&#128203;</div>
         <div>Select products from the left to build a quote</div>
       </div>
     </div>
@@ -184,7 +197,7 @@
         </div>
       </div>
       <div class="action-row">
-        <button class="btn-primary" onclick="generatePDF()">⬇ Download Quote PDF</button>
+        <button class="btn-primary" onclick="generatePDF()">&#11015; Download Quote PDF</button>
         <button class="btn-secondary" onclick="clearQuote()">Clear</button>
       </div>
     </div>
@@ -193,42 +206,162 @@
 
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script>
-// ── Pricing Data ──────────────────────────────────────────────────────────────
-const PRODUCTS = [
-  // Swing Fronts
-  { sku:'TNS-STL-101', cat:'fronts', name:'Swing door, feed window, vertical bars', jh:'E-01', img:'products/TNS-STL-101.jpg',
-    sizes:{'10ft':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'12ft':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'14ft':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
-  { sku:'TNS-STL-102', cat:'fronts', name:'Swing door, straight top bars', jh:'E-02', img:'products/TNS-STL-102.jpg',
-    sizes:{'10ft':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'12ft':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'14ft':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
-  { sku:'TNS-STL-106', cat:'fronts', name:'Compact swing door', jh:'E-04', img:'products/TNS-STL-106.jpg',
-    sizes:{'10ft':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'12ft':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'14ft':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
-  { sku:'TNS-STL-107', cat:'fronts', name:'L-shape / corner unit', jh:'E-05', img:'products/TNS-STL-107.jpg',
-    sizes:{'10ft':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},'12ft':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},'14ft':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713}} },
-  { sku:'TNS-STL-104', cat:'fronts', name:'Wave / curved top bars', jh:'E-06', img:'products/TNS-STL-104.jpg',
-    sizes:{'10ft':{'No Infill':578,'20mm Bamboo':621,'28mm Bamboo':643},'12ft':{'No Infill':606,'20mm Bamboo':655,'28mm Bamboo':679},'14ft':{'No Infill':635,'20mm Bamboo':693,'28mm Bamboo':721}} },
-  { sku:'TNS-STL-103', cat:'fronts', name:'Arched top, brass finials', jh:'E-07', img:'products/TNS-STL-103.jpg',
-    sizes:{'10ft':{'No Infill':596,'20mm Bamboo':639,'28mm Bamboo':696},'12ft':{'No Infill':620,'20mm Bamboo':667,'28mm Bamboo':730},'14ft':{'No Infill':657,'20mm Bamboo':712,'28mm Bamboo':784}} },
-  { sku:'TNS-STL-105', cat:'fronts', name:'Full front, double finials', jh:'E-09', img:'products/TNS-STL-105.jpg',
-    sizes:{'10ft':{'No Infill':596,'20mm Bamboo':639,'28mm Bamboo':696},'12ft':{'No Infill':620,'20mm Bamboo':667,'28mm Bamboo':730},'14ft':{'No Infill':657,'20mm Bamboo':712,'28mm Bamboo':784}} },
-  // Side Panels
-  { sku:'TNS-STL-201', cat:'sides', name:'Side panel — bars top, bamboo bottom', jh:'D-01', img:'products/TNS-STL-201.jpg',
-    sizes:{'10ft':{'No Infill':416,'20mm Bamboo':461,'28mm Bamboo':486},'12ft':{'No Infill':448,'20mm Bamboo':504,'28mm Bamboo':535},'14ft':{'No Infill':482,'20mm Bamboo':545,'28mm Bamboo':580}} },
-  { sku:'TNS-STL-202', cat:'sides', name:'Side panel — straight bars', jh:'D-02', img:'products/TNS-STL-202.jpg',
-    sizes:{'10ft':{'No Infill':502,'20mm Bamboo':596,'28mm Bamboo':644},'12ft':{'No Infill':550,'20mm Bamboo':662,'28mm Bamboo':717},'14ft':{'No Infill':598,'20mm Bamboo':727,'28mm Bamboo':792}} },
-  { sku:'TNS-STL-203', cat:'sides', name:'Side panel — arched top', jh:'D-03', img:'products/TNS-STL-203.jpg', confirm:true,
-    sizes:{'10ft':{'No Infill':503,'20mm Bamboo':531,'28mm Bamboo':597},'12ft':{'No Infill':566,'20mm Bamboo':600,'28mm Bamboo':635},'14ft':{'No Infill':598,'20mm Bamboo':641,'28mm Bamboo':679}} },
-  { sku:'TNS-STL-204', cat:'sides', name:'Side panel — open bar', jh:'D-04', img:'products/TNS-STL-204.jpg', confirm:true,
-    sizes:{'10ft':{'No Infill':539,'20mm Bamboo':609,'28mm Bamboo':648},'12ft':{'No Infill':605,'20mm Bamboo':644,'28mm Bamboo':685},'14ft':{'No Infill':642,'20mm Bamboo':683,'28mm Bamboo':729}} },
-  { sku:'TNS-STL-301', cat:'sides', name:'Side panel — all-black solid', jh:'D-05', img:'products/TNS-STL-301.jpg', confirm:true,
-    sizes:{'10ft':{'No Infill':473,'20mm Bamboo':554,'28mm Bamboo':594},'12ft':{'No Infill':521,'20mm Bamboo':621,'28mm Bamboo':667},'14ft':{'No Infill':569,'20mm Bamboo':686,'28mm Bamboo':745}} },
-  { sku:'TNS-STL-302', cat:'sides', name:'Side panel — two-tone', jh:'D-06', img:'products/TNS-STL-302.jpg', confirm:true,
-    sizes:{'10ft':{'No Infill':438,'20mm Bamboo':497,'28mm Bamboo':529},'12ft':{'No Infill':471,'20mm Bamboo':540,'28mm Bamboo':578},'14ft':{'No Infill':504,'20mm Bamboo':581,'28mm Bamboo':623}} },
-];
+// ── Data Model ─────────────────────────────────────────────────────────────────
+// 3 base models, each with style variants. Prices are EXW USD (powder coat).
 
-// State
+const MODELS = {
+  swing: {
+    label: 'Stall Front — Swing Door',
+    series: 'E-Series',
+    styles: [
+      { id:'E-01', sku:'TNS-STL-101', name:'Feed window, vertical bars', img:'products/TNS-STL-101.jpg' },
+      { id:'E-02', sku:'TNS-STL-102', name:'Straight top bars', img:'products/TNS-STL-102.jpg' },
+      { id:'E-03', sku:'TNS-STL-108', name:'Feed hatch, top bars', img:'products/TNS-STL-108.jpg' },
+      { id:'E-04', sku:'TNS-STL-106', name:'Compact swing door', img:'products/TNS-STL-106.jpg' },
+      { id:'E-05', sku:'TNS-STL-107', name:'L-shape / corner unit', img:'products/TNS-STL-107.jpg' },
+      { id:'E-06', sku:'TNS-STL-104', name:'Wave / curved top bars', img:'products/TNS-STL-104.jpg', note:'Pipe middle, -$15' },
+      { id:'E-07', sku:'TNS-STL-103', name:'Arched top, brass finials', img:'products/TNS-STL-103.jpg' },
+      { id:'E-08', sku:'TNS-STL-109', name:'Center opening, commercial', img:'products/TNS-STL-109.jpg' },
+      { id:'E-09', sku:'TNS-STL-105', name:'Full front, double finials', img:'products/TNS-STL-105.jpg', note:'Mesh middle + hung window' },
+    ],
+    // Base prices: E-01/E-02/E-03/E-04/E-05 share base
+    basePrices: {
+      '10ft':{'20mm Bamboo':528,'28mm Bamboo':568,'32mm Bamboo':587},
+      '12ft':{'20mm Bamboo':557,'28mm Bamboo':602,'32mm Bamboo':625},
+      '14ft':{'20mm Bamboo':583,'28mm Bamboo':635,'32mm Bamboo':660},
+    },
+    // Per-style price overrides
+    styleOverrides: {
+      'E-06': {
+        '10ft':{'20mm Bamboo':535,'28mm Bamboo':575,'32mm Bamboo':595},
+        '12ft':{'20mm Bamboo':561,'28mm Bamboo':607,'32mm Bamboo':629},
+        '14ft':{'20mm Bamboo':588,'28mm Bamboo':642,'32mm Bamboo':668},
+      },
+      'E-07': {
+        '10ft':{'20mm Bamboo':552,'28mm Bamboo':592,'32mm Bamboo':644},
+        '12ft':{'20mm Bamboo':574,'28mm Bamboo':618,'32mm Bamboo':676},
+        '14ft':{'20mm Bamboo':608,'28mm Bamboo':659,'32mm Bamboo':726},
+      },
+      'E-08': {
+        '10ft':{'20mm Bamboo':552,'28mm Bamboo':592,'32mm Bamboo':644},
+        '12ft':{'20mm Bamboo':574,'28mm Bamboo':618,'32mm Bamboo':676},
+        '14ft':{'20mm Bamboo':608,'28mm Bamboo':659,'32mm Bamboo':726},
+      },
+      'E-09': {
+        '10ft':{'20mm Bamboo':552,'28mm Bamboo':592,'32mm Bamboo':644},
+        '12ft':{'20mm Bamboo':574,'28mm Bamboo':618,'32mm Bamboo':676},
+        '14ft':{'20mm Bamboo':608,'28mm Bamboo':659,'32mm Bamboo':726},
+      },
+    },
+  },
+
+  sliding: {
+    label: 'Stall Front — Sliding Door',
+    series: 'S-Series',
+    styles: [
+      { id:'S-01', sku:'TNS-STL-401', name:'Sliding door with yoke', img:'products/TNS-STL-401.jpg' },
+      { id:'S-02', sku:'TNS-STL-402', name:'Vertical bars sliding', img:'products/TNS-STL-402.jpg' },
+      { id:'S-03', sku:'TNS-STL-403', name:'Sliding door, premium', img:'products/TNS-STL-403.jpg' },
+      { id:'S-04', sku:'TNS-STL-404', name:'Standard sliding front', img:'products/TNS-STL-404.jpg' },
+      { id:'S-05', sku:'TNS-STL-405', name:'Sliding with arch top', img:'products/TNS-STL-405.jpg' },
+      { id:'S-06', sku:'TNS-STL-406', name:'Sliding, vertical bars alt', img:'products/TNS-STL-406.jpg' },
+    ],
+    // Base prices: S-01/S-04/S-05 share base
+    basePrices: {
+      '10ft':{'20mm Bamboo':555,'28mm Bamboo':605,'32mm Bamboo':630},
+      '12ft':{'20mm Bamboo':585,'28mm Bamboo':643,'32mm Bamboo':673},
+      '14ft':{'20mm Bamboo':611,'28mm Bamboo':675,'32mm Bamboo':708},
+    },
+    styleOverrides: {
+      'S-02': {
+        '10ft':{'20mm Bamboo':555,'28mm Bamboo':587,'32mm Bamboo':603},
+        '12ft':{'20mm Bamboo':602,'28mm Bamboo':646,'32mm Bamboo':668},
+        '14ft':{'20mm Bamboo':627,'28mm Bamboo':676,'32mm Bamboo':701},
+      },
+      'S-03': {
+        '10ft':{'20mm Bamboo':610,'28mm Bamboo':655,'32mm Bamboo':675},
+        '12ft':{'20mm Bamboo':630,'28mm Bamboo':680,'32mm Bamboo':720},
+        '14ft':{'20mm Bamboo':655,'28mm Bamboo':720,'32mm Bamboo':750},
+      },
+      'S-06': {
+        '10ft':{'20mm Bamboo':555,'28mm Bamboo':587,'32mm Bamboo':603},
+        '12ft':{'20mm Bamboo':602,'28mm Bamboo':646,'32mm Bamboo':668},
+        '14ft':{'20mm Bamboo':627,'28mm Bamboo':676,'32mm Bamboo':701},
+      },
+    },
+  },
+
+  partition: {
+    label: 'Stable Partition / Side Panel',
+    series: 'D-Series',
+    styles: [
+      { id:'D-01', sku:'TNS-STL-201', name:'Bars top, bamboo bottom', img:'products/TNS-STL-201.jpg' },
+      { id:'D-02', sku:'TNS-STL-202', name:'Straight bars', img:'products/TNS-STL-202.jpg' },
+      { id:'D-03', sku:'TNS-STL-203', name:'Arched top', img:'products/TNS-STL-203.jpg' },
+      { id:'D-04', sku:'TNS-STL-204', name:'Open bar', img:'products/TNS-STL-204.jpg' },
+      { id:'D-05', sku:'TNS-STL-301', name:'All-black solid', img:'products/TNS-STL-301.jpg' },
+      { id:'D-06', sku:'TNS-STL-302', name:'Two-tone', img:'products/TNS-STL-302.jpg' },
+    ],
+    // Each D-style has its own pricing
+    basePrices: {
+      '10ft':{'20mm Bamboo':385,'28mm Bamboo':427,'32mm Bamboo':450},
+      '12ft':{'20mm Bamboo':415,'28mm Bamboo':467,'32mm Bamboo':495},
+      '14ft':{'20mm Bamboo':446,'28mm Bamboo':505,'32mm Bamboo':537},
+    },
+    styleOverrides: {
+      'D-02': {
+        '10ft':{'20mm Bamboo':465,'28mm Bamboo':552,'32mm Bamboo':596},
+        '12ft':{'20mm Bamboo':509,'28mm Bamboo':613,'32mm Bamboo':664},
+        '14ft':{'20mm Bamboo':554,'28mm Bamboo':673,'32mm Bamboo':733},
+      },
+      'D-03': {
+        '10ft':{'20mm Bamboo':466,'28mm Bamboo':492,'32mm Bamboo':553},
+        '12ft':{'20mm Bamboo':524,'28mm Bamboo':556,'32mm Bamboo':588},
+        '14ft':{'20mm Bamboo':554,'28mm Bamboo':594,'32mm Bamboo':629},
+      },
+      'D-04': {
+        '10ft':{'20mm Bamboo':499,'28mm Bamboo':564,'32mm Bamboo':600},
+        '12ft':{'20mm Bamboo':560,'28mm Bamboo':596,'32mm Bamboo':634},
+        '14ft':{'20mm Bamboo':594,'28mm Bamboo':633,'32mm Bamboo':675},
+      },
+      'D-05': {
+        '10ft':{'20mm Bamboo':438,'28mm Bamboo':513,'32mm Bamboo':550},
+        '12ft':{'20mm Bamboo':482,'28mm Bamboo':575,'32mm Bamboo':618},
+        '14ft':{'20mm Bamboo':527,'28mm Bamboo':635,'32mm Bamboo':690},
+      },
+      'D-06': {
+        '10ft':{'20mm Bamboo':406,'28mm Bamboo':460,'32mm Bamboo':490},
+        '12ft':{'20mm Bamboo':436,'28mm Bamboo':500,'32mm Bamboo':535},
+        '14ft':{'20mm Bamboo':467,'28mm Bamboo':538,'32mm Bamboo':577},
+      },
+    },
+  },
+};
+
+const SIZES = ['10ft','12ft','14ft'];
+const INFILLS = ['20mm Bamboo','28mm Bamboo','32mm Bamboo'];
+const TREATMENTS = ['Galv + Powder Coat','Hot-dip Galvanized','Galv + Painting'];
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let activeModel = 'swing';
+let selectedStyle = {}; // per model: style id
+let selectedSize = {};  // per model
+let selectedInfill = {}; // per model
+let selectedTreatment = {}; // per model
+let selectedQty = {}; // per model
 let quoteLines = [];
-let selectedConfig = {}; // per sku: { size, infill, qty }
 
+// Init defaults
+Object.keys(MODELS).forEach(m => {
+  const model = MODELS[m];
+  selectedStyle[m] = model.styles.length ? model.styles[0].id : null;
+  selectedSize[m] = '12ft';
+  selectedInfill[m] = '20mm Bamboo';
+  selectedTreatment[m] = 'Galv + Powder Coat';
+  selectedQty[m] = 1;
+});
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
 function getSettings() {
   return {
     fx: parseFloat(document.getElementById('fx').value)||1.38,
@@ -242,109 +375,183 @@ function calcRetail(exwUSD) {
   return Math.round(exwUSD * fx * df / (1 - margin/100));
 }
 
-// ── Render product cards ──────────────────────────────────────────────────────
-function renderProducts() {
-  ['fronts','sides'].forEach(cat => {
-    const el = document.getElementById(`products-${cat}`);
-    el.innerHTML = '';
-    PRODUCTS.filter(p => p.cat === cat).forEach(p => {
-      const cfg = selectedConfig[p.sku] || { size:'12ft', infill:'28mm Bamboo', qty:1 };
-      selectedConfig[p.sku] = cfg;
-      const exw = p.sizes[cfg.size]?.[cfg.infill] || 0;
-      const retail = exw ? calcRetail(exw) : 0;
-
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      card.id = `card-${p.sku}`;
-      card.innerHTML = `
-        <img src="${p.img}" alt="${p.name}" onerror="this.style.background='#eee';this.src=''">
-        <div class="product-info">
-          <div class="sku">${p.sku} · ${p.jh} ${p.confirm ? '<span class="tag tag-confirm">Pending confirm</span>' : ''}</div>
-          <div class="name">${p.name}</div>
-          <div class="product-options" id="sizes-${p.sku}">
-            ${Object.keys(p.sizes).map(s => `<span class="chip ${s===cfg.size?'active':''}" onclick="setSize('${p.sku}','${s}',this)">${s}</span>`).join('')}
-          </div>
-          <div class="product-options" style="margin-top:6px" id="infills-${p.sku}">
-            ${Object.keys(p.sizes[cfg.size]).map(i => `<span class="chip ${i===cfg.infill?'active':''}" onclick="setInfill('${p.sku}','${i}',this)">${i}</span>`).join('')}
-          </div>
-          <div class="qty-row">
-            <label>Qty</label>
-            <input type="number" min="1" value="${cfg.qty}" style="width:55px" oninput="setQty('${p.sku}',this.value)">
-            <span class="price-preview" id="price-${p.sku}">${retail ? '$'+retail.toLocaleString('en-CA')+' CAD/ea' : '—'}</span>
-            <button class="add-btn" onclick="addLine('${p.sku}')">+ Add</button>
-          </div>
-        </div>
-      `;
-      el.appendChild(card);
-    });
-  });
+function getExwPrice(modelKey, styleId, size, infill) {
+  const model = MODELS[modelKey];
+  if (!model) return 0;
+  // Check style overrides first, then base prices
+  const prices = model.styleOverrides[styleId] || model.basePrices;
+  return prices[size]?.[infill] || 0;
 }
 
-function setSize(sku, size, el) {
-  selectedConfig[sku].size = size;
-  // Reset infill to first available
-  const p = PRODUCTS.find(x => x.sku === sku);
-  const infills = Object.keys(p.sizes[size]);
-  if (!infills.includes(selectedConfig[sku].infill)) selectedConfig[sku].infill = infills[0];
-  // Update chips
-  document.querySelectorAll(`#sizes-${sku} .chip`).forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  // Re-render infill chips
-  document.getElementById(`infills-${sku}`).innerHTML =
-    infills.map(i => `<span class="chip ${i===selectedConfig[sku].infill?'active':''}" onclick="setInfill('${sku}','${i}',this)">${i}</span>`).join('');
-  updatePreview(sku);
+function getStyleObj(modelKey, styleId) {
+  return MODELS[modelKey].styles.find(s => s.id === styleId);
 }
 
-function setInfill(sku, infill, el) {
-  selectedConfig[sku].infill = infill;
-  document.querySelectorAll(`#infills-${sku} .chip`).forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  updatePreview(sku);
-}
-
-function setQty(sku, val) {
-  selectedConfig[sku].qty = parseInt(val)||1;
-}
-
-function updatePreview(sku) {
-  const p = PRODUCTS.find(x => x.sku === sku);
-  const cfg = selectedConfig[sku];
-  const exw = p.sizes[cfg.size]?.[cfg.infill]||0;
-  const retail = exw ? calcRetail(exw) : 0;
-  document.getElementById(`price-${sku}`).textContent = retail ? '$'+retail.toLocaleString('en-CA')+' CAD/ea' : '—';
-}
-
-function refreshPreviews() {
-  PRODUCTS.forEach(p => updatePreview(p.sku));
-  renderQuote();
-}
-
-function showCat(cat, el) {
+// ── Model tab switching ────────────────────────────────────────────────────────
+function showModel(modelKey, el) {
+  activeModel = modelKey;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('cat-fronts').style.display = cat==='fronts' ? '' : 'none';
-  document.getElementById('cat-sides').style.display = cat==='sides' ? '' : 'none';
+  ['swing','sliding','partition'].forEach(m => {
+    document.getElementById('model-'+m).style.display = m===modelKey ? '' : 'none';
+  });
 }
 
 function toggleSettings() {
   const c = document.getElementById('settings-content');
   const open = c.classList.toggle('open');
-  document.getElementById('settings-arrow').textContent = open ? '▲' : '▼';
+  document.getElementById('settings-arrow').textContent = open ? '\u25B2' : '\u25BC';
 }
 
-// ── Quote lines ───────────────────────────────────────────────────────────────
-function addLine(sku) {
-  const p = PRODUCTS.find(x => x.sku === sku);
-  const cfg = selectedConfig[sku];
-  const exw = p.sizes[cfg.size]?.[cfg.infill]||0;
+// ── Render model panels ────────────────────────────────────────────────────────
+function renderModels() {
+  Object.keys(MODELS).forEach(modelKey => {
+    const model = MODELS[modelKey];
+    const container = document.getElementById('model-'+modelKey);
+    container.innerHTML = '';
+
+
+    const curStyle = selectedStyle[modelKey];
+    const curSize = selectedSize[modelKey];
+    const curInfill = selectedInfill[modelKey];
+    const curTreatment = selectedTreatment[modelKey];
+    const curQty = selectedQty[modelKey];
+
+    // Category title
+    const title = document.createElement('div');
+    title.className = 'category-title';
+    title.textContent = model.label + ' \u2014 ' + model.series;
+    container.appendChild(title);
+
+    // Style grid
+    const grid = document.createElement('div');
+    grid.className = 'style-grid';
+    model.styles.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'style-card' + (s.id === curStyle ? ' active' : '');
+      card.onclick = () => { selectedStyle[modelKey] = s.id; renderModels(); };
+      card.innerHTML = `
+        <img src="${s.img}" alt="${s.name}" onerror="this.style.background='#eee';this.src=''">
+        <div class="style-name">${s.name}</div>
+        <div class="style-code">${s.id}${s.confirm ? ' <span class="tag tag-confirm">Confirm</span>' : ''}</div>
+      `;
+      grid.appendChild(card);
+    });
+    container.appendChild(grid);
+
+    // Config panel
+    const panel = document.createElement('div');
+    panel.className = 'config-panel';
+
+    const styleObj = getStyleObj(modelKey, curStyle);
+    const exw = getExwPrice(modelKey, curStyle, curSize, curInfill);
+    const retail = exw ? calcRetail(exw) : 0;
+
+    panel.innerHTML = `
+      <div class="config-header">
+        <img src="${styleObj.img}" alt="${styleObj.name}" onerror="this.style.background='#eee';this.src=''">
+        <div>
+          <div class="config-title">${styleObj.name}</div>
+          <div class="config-sub">${styleObj.sku} &middot; ${styleObj.id}${styleObj.note ? ' &middot; '+styleObj.note : ''}</div>
+        </div>
+      </div>
+
+      <div class="option-section">
+        <div class="option-label">Size</div>
+        <div class="chip-row" id="chips-size-${modelKey}">
+          ${SIZES.map(s => {
+            const avail = (model.styleOverrides[curStyle] || model.basePrices)[s];
+            return `<span class="chip ${s===curSize?'active':''} ${!avail?'disabled':''}"
+              onclick="${avail ? `selectSize('${modelKey}','${s}')` : ''}">${s}</span>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="option-section">
+        <div class="option-label">Infill Material</div>
+        <div class="chip-row" id="chips-infill-${modelKey}">
+          ${INFILLS.map(i => {
+            const prices = (model.styleOverrides[curStyle] || model.basePrices)[curSize] || {};
+            const avail = prices[i] !== undefined;
+            return `<span class="chip ${i===curInfill?'active':''} ${!avail?'disabled':''}"
+              onclick="${avail ? `selectInfill('${modelKey}','${i}')` : ''}">${i}</span>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="option-section">
+        <div class="option-label">Surface Treatment</div>
+        <div class="chip-row">
+          ${TREATMENTS.map(t => {
+            const isBase = t === 'Galv + Powder Coat';
+            return `<span class="chip ${t===curTreatment?'active':''} ${!isBase?'disabled':''}"
+              onclick="${isBase ? `selectTreatment('${modelKey}','${t}')` : ''}">${t}${!isBase?' (TBD)':''}</span>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="qty-row">
+        <label>Qty</label>
+        <input type="number" min="1" value="${curQty}" style="width:55px" oninput="selectQty('${modelKey}',this.value)">
+        <span class="price-preview">${retail ? '$'+retail.toLocaleString('en-CA')+' CAD/ea' : '\u2014'}</span>
+        <button class="add-btn" onclick="addLine('${modelKey}')" ${!exw?'disabled':''}>+ Add</button>
+      </div>
+    `;
+
+    container.appendChild(panel);
+  });
+}
+
+// ── Selection handlers ─────────────────────────────────────────────────────────
+function selectSize(modelKey, size) {
+  selectedSize[modelKey] = size;
+  // Validate infill still available
+  const model = MODELS[modelKey];
+  const prices = (model.styleOverrides[selectedStyle[modelKey]] || model.basePrices)[size] || {};
+  if (!prices[selectedInfill[modelKey]]) {
+    selectedInfill[modelKey] = Object.keys(prices)[0] || 'No Infill';
+  }
+  renderModels();
+}
+
+function selectInfill(modelKey, infill) {
+  selectedInfill[modelKey] = infill;
+  renderModels();
+}
+
+function selectTreatment(modelKey, treatment) {
+  selectedTreatment[modelKey] = treatment;
+  renderModels();
+}
+
+function selectQty(modelKey, val) {
+  selectedQty[modelKey] = parseInt(val)||1;
+}
+
+function refreshAll() {
+  renderModels();
+  renderQuote();
+}
+
+// ── Quote lines ────────────────────────────────────────────────────────────────
+function addLine(modelKey) {
+  const model = MODELS[modelKey];
+  const styleId = selectedStyle[modelKey];
+  const style = getStyleObj(modelKey, styleId);
+  const size = selectedSize[modelKey];
+  const infill = selectedInfill[modelKey];
+  const treatment = selectedTreatment[modelKey];
+  const qty = selectedQty[modelKey];
+  const exw = getExwPrice(modelKey, styleId, size, infill);
   if (!exw) return;
   const retail = calcRetail(exw);
   quoteLines.push({
     id: Date.now(),
-    sku: p.sku, name: p.name, jh: p.jh, img: p.img,
-    size: cfg.size, infill: cfg.infill, qty: cfg.qty,
+    modelKey, styleId,
+    sku: style.sku, name: style.name, jh: styleId, img: style.img,
+    size, infill, treatment, qty,
     unitPrice: retail,
-    total: retail * cfg.qty,
+    total: retail * qty,
   });
   renderQuote();
 }
@@ -364,7 +571,7 @@ function renderQuote() {
   const footer = document.getElementById('quote-footer');
 
   if (quoteLines.length === 0) {
-    body.innerHTML = `<div class="empty-state"><div class="icon">📋</div><div>Select products from the left to build a quote</div></div>`;
+    body.innerHTML = '<div class="empty-state"><div class="icon">&#128203;</div><div>Select products from the left to build a quote</div></div>';
     footer.style.display = 'none';
     return;
   }
@@ -374,32 +581,32 @@ function renderQuote() {
       <img src="${l.img}" alt="${l.name}" onerror="this.style.background='#eee';this.src=''">
       <div>
         <div class="li-name">${l.name}</div>
-        <div class="li-detail">${l.sku} · ${l.jh} · ${l.size} · ${l.infill} · Qty ${l.qty}</div>
+        <div class="li-detail">${l.sku} &middot; ${l.jh} &middot; ${l.size} &middot; ${l.infill} &middot; ${l.treatment} &middot; Qty ${l.qty}</div>
       </div>
       <div>
         <div class="li-price">$${l.total.toLocaleString('en-CA')}</div>
         <div class="li-unit">$${l.unitPrice.toLocaleString('en-CA')} ea</div>
       </div>
-      <button class="remove-btn" onclick="removeLine(${l.id})">×</button>
+      <button class="remove-btn" onclick="removeLine(${l.id})">&#215;</button>
     </div>
   `).join('');
 
   const grand = quoteLines.reduce((s,l) => s+l.total, 0);
   const totalQty = quoteLines.reduce((s,l) => s+l.qty, 0);
   document.getElementById('grand-total').textContent = '$'+grand.toLocaleString('en-CA')+' CAD';
-  document.getElementById('item-count').textContent = `${totalQty} unit${totalQty!==1?'s':''} · ${quoteLines.length} line item${quoteLines.length!==1?'s':''}`;
+  document.getElementById('item-count').textContent = totalQty+' unit'+(totalQty!==1?'s':'')+' \u00B7 '+quoteLines.length+' line item'+(quoteLines.length!==1?'s':'');
   document.getElementById('quote-date').textContent = 'Prepared '+new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
   footer.style.display = 'block';
 }
 
-// ── PDF Generation ────────────────────────────────────────────────────────────
+// ── PDF Generation ─────────────────────────────────────────────────────────────
 async function generatePDF() {
   const btn = document.querySelector('.btn-primary');
   btn.textContent = 'Generating...';
   btn.disabled = true;
 
   try {
-    const { PDFDocument, rgb, StandardFonts, PageSizes } = PDFLib;
+    const { PDFDocument, rgb, StandardFonts } = PDFLib;
     const doc = await PDFDocument.create();
 
     const fontR = await doc.embedFont(StandardFonts.Helvetica);
@@ -446,14 +653,11 @@ async function generatePDF() {
       }
     }
 
-    // ── Page 1: Cover / Header ──
     const W = 612, H = 792;
 
     const addPage = () => {
       const p = doc.addPage([W, H]);
-      // Header bar
       p.drawRectangle({ x:0, y:H-70, width:W, height:70, color:navy });
-      // Logo
       if (logoImg) {
         const maxH = 50, maxW = 80;
         const aspect = logoImg.width / logoImg.height;
@@ -462,14 +666,11 @@ async function generatePDF() {
         const lx = 24, ly = H - 70 + (70 - lh) / 2;
         p.drawImage(logoImg, { x:lx, y:ly, width:lw, height:lh, opacity:0.85 });
       }
-      // Company name in header
       const textX = logoImg ? 112 : 24;
       p.drawText('True North Steelworks', { x:textX, y:H-28, size:14, font:fontB, color:white });
-      p.drawText('truenorthsteelworks.com  ·  sales@truenorthsteelworks.com', { x:textX, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
-      // Quote # top right
+      p.drawText('truenorthsteelworks.com  \u00B7  sales@truenorthsteelworks.com', { x:textX, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
       p.drawText(quoteNum, { x:W-120, y:H-28, size:11, font:fontB, color:gold });
       p.drawText(dateStr, { x:W-130, y:H-44, size:9, font:fontR, color:rgb(0.7,0.8,0.9) });
-      // Gold accent line
       p.drawRectangle({ x:0, y:H-73, width:W, height:3, color:gold });
       return p;
     };
@@ -477,7 +678,6 @@ async function generatePDF() {
     let page = addPage();
     let y = H - 100;
 
-    // Quote title
     page.drawText('CUSTOM STALL QUOTE', { x:24, y, size:22, font:fontB, color:navy });
     y -= 28;
     page.drawText('Thank you for your interest in True North Steelworks custom horse stalls.', { x:24, y, size:10, font:fontR, color:grey });
@@ -488,21 +688,25 @@ async function generatePDF() {
     page.drawRectangle({ x:24, y:y-70, width:4, height:80, color:navy });
     page.drawText('PREPARED FOR', { x:36, y:y-4, size:8, font:fontB, color:navy });
     page.drawText(cust.name, { x:36, y:y-18, size:14, font:fontB, color:black });
-    let cx = 36;
-    if (cust.addr) { page.drawText(cust.addr, { x:cx, y:y-32, size:10, font:fontR, color:grey }); }
-    if (cust.email) { page.drawText(cust.email, { x:cx, y:y-44, size:10, font:fontR, color:grey }); }
-    if (cust.phone) { page.drawText(cust.phone, { x:cx+200, y:y-44, size:10, font:fontR, color:grey }); }
-    if (cust.notes) { page.drawText('Notes: '+cust.notes, { x:cx, y:y-58, size:9, font:fontR, color:grey }); }
+    if (cust.addr) page.drawText(cust.addr, { x:36, y:y-32, size:10, font:fontR, color:grey });
+    if (cust.email) page.drawText(cust.email, { x:36, y:y-44, size:10, font:fontR, color:grey });
+    if (cust.phone) page.drawText(cust.phone, { x:236, y:y-44, size:10, font:fontR, color:grey });
+    if (cust.notes) page.drawText('Notes: '+cust.notes, { x:36, y:y-58, size:9, font:fontR, color:grey });
     y -= 90;
 
-    // Line items header
-    page.drawRectangle({ x:24, y:y-20, width:W-48, height:24, color:navy });
-    page.drawText('PRODUCT', { x:32, y:y-14, size:8, font:fontB, color:white });
-    page.drawText('SIZE', { x:310, y:y-14, size:8, font:fontB, color:white });
-    page.drawText('INFILL', { x:365, y:y-14, size:8, font:fontB, color:white });
-    page.drawText('QTY', { x:440, y:y-14, size:8, font:fontB, color:white });
-    page.drawText('UNIT', { x:470, y:y-14, size:8, font:fontB, color:white });
-    page.drawText('TOTAL', { x:525, y:y-14, size:8, font:fontB, color:white });
+    // Column headers
+    const drawHeaders = (p, yPos) => {
+      p.drawRectangle({ x:24, y:yPos-20, width:W-48, height:24, color:navy });
+      p.drawText('PRODUCT', { x:32, y:yPos-14, size:8, font:fontB, color:white });
+      p.drawText('SIZE', { x:280, y:yPos-14, size:8, font:fontB, color:white });
+      p.drawText('INFILL', { x:320, y:yPos-14, size:8, font:fontB, color:white });
+      p.drawText('FINISH', { x:400, y:yPos-14, size:8, font:fontB, color:white });
+      p.drawText('QTY', { x:462, y:yPos-14, size:8, font:fontB, color:white });
+      p.drawText('UNIT', { x:488, y:yPos-14, size:8, font:fontB, color:white });
+      p.drawText('TOTAL', { x:540, y:yPos-14, size:8, font:fontB, color:white });
+    };
+
+    drawHeaders(page, y);
     y -= 26;
 
     // Line items
@@ -511,44 +715,39 @@ async function generatePDF() {
       const rowH = 70;
 
       if (y - rowH < 80) {
-        // Footer on current page
         drawFooter(page, W, H, fontR, grey, gold, rgb);
         page = addPage();
         y = H - 100;
-        // Re-draw column headers
-        page.drawRectangle({ x:24, y:y-20, width:W-48, height:24, color:navy });
-        page.drawText('PRODUCT', { x:32, y:y-14, size:8, font:fontB, color:white });
-        page.drawText('SIZE', { x:310, y:y-14, size:8, font:fontB, color:white });
-        page.drawText('INFILL', { x:365, y:y-14, size:8, font:fontB, color:white });
-        page.drawText('QTY', { x:440, y:y-14, size:8, font:fontB, color:white });
-        page.drawText('UNIT', { x:470, y:y-14, size:8, font:fontB, color:white });
-        page.drawText('TOTAL', { x:525, y:y-14, size:8, font:fontB, color:white });
+        drawHeaders(page, y);
         y -= 26;
       }
 
-      // Row background
       if (i%2===0) page.drawRectangle({ x:24, y:y-rowH, width:W-48, height:rowH, color:rgb(0.98,0.98,0.99) });
 
-      // Product image
       const pimg = imgCache[l.sku];
       if (pimg) {
         const ih = 56, iw = ih * (pimg.width/pimg.height);
         page.drawImage(pimg, { x:28, y:y-rowH+7, width:Math.min(iw,56), height:ih });
       }
 
-      // Text
-      page.drawText(l.name, { x:92, y:y-16, size:10, font:fontB, color:black, maxWidth:210 });
-      page.drawText(`${l.sku}  ·  ${l.jh}`, { x:92, y:y-28, size:8, font:fontR, color:grey });
-      page.drawText(l.size, { x:310, y:y-20, size:10, font:fontR, color:black });
-      page.drawText(l.infill, { x:365, y:y-20, size:10, font:fontR, color:black });
-      page.drawText(String(l.qty), { x:448, y:y-20, size:10, font:fontR, color:black });
-      page.drawText(fmt(l.unitPrice), { x:463, y:y-20, size:10, font:fontR, color:black });
-      // Total right-aligned
+      page.drawText(l.name, { x:92, y:y-16, size:10, font:fontB, color:black, maxWidth:180 });
+      page.drawText(l.sku+'  \u00B7  '+l.jh, { x:92, y:y-28, size:8, font:fontR, color:grey });
+      page.drawText(l.size, { x:280, y:y-20, size:9, font:fontR, color:black });
+
+      // Truncate infill for PDF
+      const infillShort = l.infill === 'No Infill' ? 'None' : l.infill;
+      page.drawText(infillShort, { x:320, y:y-20, size:9, font:fontR, color:black });
+
+      // Truncate treatment for PDF
+      const treatShort = l.treatment.replace('Galv + ','').replace('Galvanized','Galv');
+      page.drawText(treatShort, { x:400, y:y-20, size:8, font:fontR, color:black });
+
+      page.drawText(String(l.qty), { x:468, y:y-20, size:10, font:fontR, color:black });
+      page.drawText(fmt(l.unitPrice), { x:484, y:y-20, size:9, font:fontR, color:black });
       const totalStr = fmt(l.total);
       const totalW = fontB.widthOfTextAtSize(totalStr, 11);
       page.drawText(totalStr, { x:W-24-totalW, y:y-20, size:11, font:fontB, color:navy });
 
-      // Divider
       page.drawLine({ start:{x:24,y:y-rowH}, end:{x:W-24,y:y-rowH}, thickness:0.5, color:rgb(0.88,0.88,0.88) });
       y -= rowH;
     }
@@ -564,11 +763,11 @@ async function generatePDF() {
     }
 
     page.drawRectangle({ x:W-220, y:y-tboxH, width:196, height:tboxH, color:navy });
-    const totalQtyStr = `${totalQty} unit${totalQty!==1?'s':''}`;
     page.drawText('QUOTE TOTAL (CAD)', { x:W-210, y:y-18, size:8, font:fontB, color:rgb(0.7,0.8,0.9) });
     const grandStr = fmt(grand);
     const grandW = fontB.widthOfTextAtSize(grandStr, 20);
     page.drawText(grandStr, { x:W-24-grandW, y:y-38, size:20, font:fontB, color:white });
+    const totalQtyStr = totalQty+' unit'+(totalQty!==1?'s':'');
     page.drawText(totalQtyStr, { x:W-210, y:y-54, size:9, font:fontR, color:rgb(0.6,0.7,0.8) });
     page.drawRectangle({ x:W-220, y:y-tboxH, width:4, height:tboxH, color:gold });
 
@@ -578,27 +777,26 @@ async function generatePDF() {
     if (y > 100) {
       const terms = [
         'All prices in Canadian dollars (CAD). Quote valid for 30 days from date of issue.',
-        'Prices are EXW Ontario — delivery and installation quoted separately.',
-        'Custom orders require 50% deposit. Lead time 8–12 weeks from order confirmation.',
+        'Prices are EXW Ontario \u2014 delivery and installation quoted separately.',
+        'Custom orders require 50% deposit. Lead time 8\u201312 weeks from order confirmation.',
         'All steel stall components are powder coated and engineered for Canadian climate conditions.',
       ];
       page.drawText('TERMS & CONDITIONS', { x:24, y, size:8, font:fontB, color:navy });
       y -= 14;
       terms.forEach(t => {
-        page.drawText('·  '+t, { x:24, y, size:8, font:fontR, color:grey, maxWidth:W-48 });
+        page.drawText('\u00B7  '+t, { x:24, y, size:8, font:fontR, color:grey, maxWidth:W-48 });
         y -= 13;
       });
     }
 
     drawFooter(page, W, H, fontR, grey, gold, rgb);
 
-    // Save
     const bytes = await doc.save();
     const blob = new Blob([bytes], { type:'application/pdf' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `TNS_Quote_${cust.name.replace(/\s+/g,'_')}_${quoteNum}.pdf`;
+    a.download = 'TNS_Quote_'+cust.name.replace(/\s+/g,'_')+'_'+quoteNum+'.pdf';
     a.click();
     URL.revokeObjectURL(url);
 
@@ -607,21 +805,21 @@ async function generatePDF() {
     console.error(e);
   }
 
-  btn.textContent = '⬇ Download Quote PDF';
+  btn.textContent = '\u2B07 Download Quote PDF';
   btn.disabled = false;
 }
 
 function drawFooter(page, W, H, fontR, grey, gold, rgb) {
   page.drawRectangle({ x:0, y:0, width:W, height:36, color:rgb(0.96,0.97,0.98) });
   page.drawRectangle({ x:0, y:36, width:W, height:1, color:rgb(0.85,0.85,0.85) });
-  page.drawText('True North Steelworks  ·  truenorthsteelworks.com  ·  sales@truenorthsteelworks.com', {
+  page.drawText('True North Steelworks  \u00B7  truenorthsteelworks.com  \u00B7  sales@truenorthsteelworks.com', {
     x:24, y:14, size:8, font:fontR, color:grey
   });
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────────────────────────
 document.getElementById('quote-date').textContent = new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
-renderProducts();
+renderModels();
 </script>
 </body>
 </html>
