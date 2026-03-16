@@ -214,36 +214,43 @@ const MODELS = {
     label: 'Stall Front — Swing Door',
     series: 'E-Series',
     styles: [
-      { id:'E-01', sku:'TNS-STL-101', name:'Feed window, vertical bars', img:'products/TNS-STL-101.jpg', delta:0 },
-      { id:'E-02', sku:'TNS-STL-102', name:'Straight top bars', img:'products/TNS-STL-102.jpg', delta:0 },
-      { id:'E-04', sku:'TNS-STL-106', name:'Compact swing door', img:'products/TNS-STL-106.jpg', delta:0 },
-      { id:'E-05', sku:'TNS-STL-107', name:'L-shape / corner unit', img:'products/TNS-STL-107.jpg', delta:0 },
-      { id:'E-06', sku:'TNS-STL-104', name:'Wave / curved top bars', img:'products/TNS-STL-104.jpg', delta:0, note:'Pipe middle' },
-      { id:'E-07', sku:'TNS-STL-103', name:'Arched top, brass finials', img:'products/TNS-STL-103.jpg', delta:0 },
-      { id:'E-09', sku:'TNS-STL-105', name:'Full front, double finials', img:'products/TNS-STL-105.jpg', delta:0, note:'Mesh middle + hung window' },
+      { id:'E-01', sku:'TNS-STL-101', name:'Feed window, vertical bars', img:'products/TNS-STL-101.jpg' },
+      { id:'E-02', sku:'TNS-STL-102', name:'Straight top bars', img:'products/TNS-STL-102.jpg' },
+      { id:'E-03', sku:'TNS-STL-108', name:'Feed hatch, top bars', img:'products/TNS-STL-108.jpg' },
+      { id:'E-04', sku:'TNS-STL-106', name:'Compact swing door', img:'products/TNS-STL-106.jpg' },
+      { id:'E-05', sku:'TNS-STL-107', name:'L-shape / corner unit', img:'products/TNS-STL-107.jpg' },
+      { id:'E-06', sku:'TNS-STL-104', name:'Wave / curved top bars', img:'products/TNS-STL-104.jpg', note:'Pipe middle, -$15' },
+      { id:'E-07', sku:'TNS-STL-103', name:'Arched top, brass finials', img:'products/TNS-STL-103.jpg' },
+      { id:'E-08', sku:'TNS-STL-109', name:'Center opening, commercial', img:'products/TNS-STL-109.jpg' },
+      { id:'E-09', sku:'TNS-STL-105', name:'Full front, double finials', img:'products/TNS-STL-105.jpg', note:'Mesh middle + hung window' },
     ],
-    // Base prices by size × infill (E-01/E-02 base)
+    // Base prices: E-01/E-02/E-03/E-04/E-05 share base
     basePrices: {
-      '10ft':{'No Infill':570,'20mm Bamboo':614,'28mm Bamboo':634},
-      '12ft':{'No Infill':602,'20mm Bamboo':650,'28mm Bamboo':675},
-      '14ft':{'No Infill':630,'20mm Bamboo':686,'28mm Bamboo':713},
+      '10ft':{'20mm Bamboo':528,'28mm Bamboo':568,'32mm Bamboo':587},
+      '12ft':{'20mm Bamboo':557,'28mm Bamboo':602,'32mm Bamboo':625},
+      '14ft':{'20mm Bamboo':583,'28mm Bamboo':635,'32mm Bamboo':660},
     },
-    // Per-style price overrides (where they differ from base)
+    // Per-style price overrides
     styleOverrides: {
       'E-06': {
-        '10ft':{'No Infill':578,'20mm Bamboo':621,'28mm Bamboo':643},
-        '12ft':{'No Infill':606,'20mm Bamboo':655,'28mm Bamboo':679},
-        '14ft':{'No Infill':635,'20mm Bamboo':693,'28mm Bamboo':721},
+        '10ft':{'20mm Bamboo':535,'28mm Bamboo':575,'32mm Bamboo':595},
+        '12ft':{'20mm Bamboo':561,'28mm Bamboo':607,'32mm Bamboo':629},
+        '14ft':{'20mm Bamboo':588,'28mm Bamboo':642,'32mm Bamboo':668},
       },
       'E-07': {
-        '10ft':{'No Infill':596,'20mm Bamboo':639,'28mm Bamboo':696},
-        '12ft':{'No Infill':620,'20mm Bamboo':667,'28mm Bamboo':730},
-        '14ft':{'No Infill':657,'20mm Bamboo':712,'28mm Bamboo':784},
+        '10ft':{'20mm Bamboo':552,'28mm Bamboo':592,'32mm Bamboo':644},
+        '12ft':{'20mm Bamboo':574,'28mm Bamboo':618,'32mm Bamboo':676},
+        '14ft':{'20mm Bamboo':608,'28mm Bamboo':659,'32mm Bamboo':726},
+      },
+      'E-08': {
+        '10ft':{'20mm Bamboo':552,'28mm Bamboo':592,'32mm Bamboo':644},
+        '12ft':{'20mm Bamboo':574,'28mm Bamboo':618,'32mm Bamboo':676},
+        '14ft':{'20mm Bamboo':608,'28mm Bamboo':659,'32mm Bamboo':726},
       },
       'E-09': {
-        '10ft':{'No Infill':596,'20mm Bamboo':639,'28mm Bamboo':696},
-        '12ft':{'No Infill':620,'20mm Bamboo':667,'28mm Bamboo':730},
-        '14ft':{'No Infill':657,'20mm Bamboo':712,'28mm Bamboo':784},
+        '10ft':{'20mm Bamboo':552,'28mm Bamboo':592,'32mm Bamboo':644},
+        '12ft':{'20mm Bamboo':574,'28mm Bamboo':618,'32mm Bamboo':676},
+        '14ft':{'20mm Bamboo':608,'28mm Bamboo':659,'32mm Bamboo':726},
       },
     },
   },
@@ -251,60 +258,88 @@ const MODELS = {
   sliding: {
     label: 'Stall Front — Sliding Door',
     series: 'S-Series',
-    styles: [],
-    basePrices: {},
-    styleOverrides: {},
-    comingSoon: true,
+    styles: [
+      { id:'S-01', sku:'TNS-STL-401', name:'Sliding door with yoke', img:'products/TNS-STL-401.jpg' },
+      { id:'S-02', sku:'TNS-STL-402', name:'Vertical bars sliding', img:'products/TNS-STL-402.jpg' },
+      { id:'S-03', sku:'TNS-STL-403', name:'Sliding door, premium', img:'products/TNS-STL-403.jpg' },
+      { id:'S-04', sku:'TNS-STL-404', name:'Standard sliding front', img:'products/TNS-STL-404.jpg' },
+      { id:'S-05', sku:'TNS-STL-405', name:'Sliding with arch top', img:'products/TNS-STL-405.jpg' },
+      { id:'S-06', sku:'TNS-STL-406', name:'Sliding, vertical bars alt', img:'products/TNS-STL-406.jpg' },
+    ],
+    // Base prices: S-01/S-04/S-05 share base
+    basePrices: {
+      '10ft':{'20mm Bamboo':555,'28mm Bamboo':605,'32mm Bamboo':630},
+      '12ft':{'20mm Bamboo':585,'28mm Bamboo':643,'32mm Bamboo':673},
+      '14ft':{'20mm Bamboo':611,'28mm Bamboo':675,'32mm Bamboo':708},
+    },
+    styleOverrides: {
+      'S-02': {
+        '10ft':{'20mm Bamboo':555,'28mm Bamboo':587,'32mm Bamboo':603},
+        '12ft':{'20mm Bamboo':602,'28mm Bamboo':646,'32mm Bamboo':668},
+        '14ft':{'20mm Bamboo':627,'28mm Bamboo':676,'32mm Bamboo':701},
+      },
+      'S-03': {
+        '10ft':{'20mm Bamboo':610,'28mm Bamboo':655,'32mm Bamboo':675},
+        '12ft':{'20mm Bamboo':630,'28mm Bamboo':680,'32mm Bamboo':720},
+        '14ft':{'20mm Bamboo':655,'28mm Bamboo':720,'32mm Bamboo':750},
+      },
+      'S-06': {
+        '10ft':{'20mm Bamboo':555,'28mm Bamboo':587,'32mm Bamboo':603},
+        '12ft':{'20mm Bamboo':602,'28mm Bamboo':646,'32mm Bamboo':668},
+        '14ft':{'20mm Bamboo':627,'28mm Bamboo':676,'32mm Bamboo':701},
+      },
+    },
   },
 
   partition: {
     label: 'Stable Partition / Side Panel',
     series: 'D-Series',
     styles: [
-      { id:'D-01', sku:'TNS-STL-201', name:'Bars top, bamboo bottom', img:'products/TNS-STL-201.jpg', delta:0 },
-      { id:'D-02', sku:'TNS-STL-202', name:'Straight bars', img:'products/TNS-STL-202.jpg', delta:0 },
-      { id:'D-03', sku:'TNS-STL-203', name:'Arched top', img:'products/TNS-STL-203.jpg', delta:0, confirm:true },
-      { id:'D-04', sku:'TNS-STL-204', name:'Open bar', img:'products/TNS-STL-204.jpg', delta:0, confirm:true },
-      { id:'D-05', sku:'TNS-STL-301', name:'All-black solid', img:'products/TNS-STL-301.jpg', delta:0, confirm:true },
-      { id:'D-06', sku:'TNS-STL-302', name:'Two-tone', img:'products/TNS-STL-302.jpg', delta:0, confirm:true },
+      { id:'D-01', sku:'TNS-STL-201', name:'Bars top, bamboo bottom', img:'products/TNS-STL-201.jpg' },
+      { id:'D-02', sku:'TNS-STL-202', name:'Straight bars', img:'products/TNS-STL-202.jpg' },
+      { id:'D-03', sku:'TNS-STL-203', name:'Arched top', img:'products/TNS-STL-203.jpg' },
+      { id:'D-04', sku:'TNS-STL-204', name:'Open bar', img:'products/TNS-STL-204.jpg' },
+      { id:'D-05', sku:'TNS-STL-301', name:'All-black solid', img:'products/TNS-STL-301.jpg' },
+      { id:'D-06', sku:'TNS-STL-302', name:'Two-tone', img:'products/TNS-STL-302.jpg' },
     ],
+    // Each D-style has its own pricing
     basePrices: {
-      '10ft':{'No Infill':416,'20mm Bamboo':461,'28mm Bamboo':486},
-      '12ft':{'No Infill':448,'20mm Bamboo':504,'28mm Bamboo':535},
-      '14ft':{'No Infill':482,'20mm Bamboo':545,'28mm Bamboo':580},
+      '10ft':{'20mm Bamboo':385,'28mm Bamboo':427,'32mm Bamboo':450},
+      '12ft':{'20mm Bamboo':415,'28mm Bamboo':467,'32mm Bamboo':495},
+      '14ft':{'20mm Bamboo':446,'28mm Bamboo':505,'32mm Bamboo':537},
     },
     styleOverrides: {
       'D-02': {
-        '10ft':{'No Infill':502,'20mm Bamboo':596,'28mm Bamboo':644},
-        '12ft':{'No Infill':550,'20mm Bamboo':662,'28mm Bamboo':717},
-        '14ft':{'No Infill':598,'20mm Bamboo':727,'28mm Bamboo':792},
+        '10ft':{'20mm Bamboo':465,'28mm Bamboo':552,'32mm Bamboo':596},
+        '12ft':{'20mm Bamboo':509,'28mm Bamboo':613,'32mm Bamboo':664},
+        '14ft':{'20mm Bamboo':554,'28mm Bamboo':673,'32mm Bamboo':733},
       },
       'D-03': {
-        '10ft':{'No Infill':503,'20mm Bamboo':531,'28mm Bamboo':597},
-        '12ft':{'No Infill':566,'20mm Bamboo':600,'28mm Bamboo':635},
-        '14ft':{'No Infill':598,'20mm Bamboo':641,'28mm Bamboo':679},
+        '10ft':{'20mm Bamboo':466,'28mm Bamboo':492,'32mm Bamboo':553},
+        '12ft':{'20mm Bamboo':524,'28mm Bamboo':556,'32mm Bamboo':588},
+        '14ft':{'20mm Bamboo':554,'28mm Bamboo':594,'32mm Bamboo':629},
       },
       'D-04': {
-        '10ft':{'No Infill':539,'20mm Bamboo':609,'28mm Bamboo':648},
-        '12ft':{'No Infill':605,'20mm Bamboo':644,'28mm Bamboo':685},
-        '14ft':{'No Infill':642,'20mm Bamboo':683,'28mm Bamboo':729},
+        '10ft':{'20mm Bamboo':499,'28mm Bamboo':564,'32mm Bamboo':600},
+        '12ft':{'20mm Bamboo':560,'28mm Bamboo':596,'32mm Bamboo':634},
+        '14ft':{'20mm Bamboo':594,'28mm Bamboo':633,'32mm Bamboo':675},
       },
       'D-05': {
-        '10ft':{'No Infill':473,'20mm Bamboo':554,'28mm Bamboo':594},
-        '12ft':{'No Infill':521,'20mm Bamboo':621,'28mm Bamboo':667},
-        '14ft':{'No Infill':569,'20mm Bamboo':686,'28mm Bamboo':745},
+        '10ft':{'20mm Bamboo':438,'28mm Bamboo':513,'32mm Bamboo':550},
+        '12ft':{'20mm Bamboo':482,'28mm Bamboo':575,'32mm Bamboo':618},
+        '14ft':{'20mm Bamboo':527,'28mm Bamboo':635,'32mm Bamboo':690},
       },
       'D-06': {
-        '10ft':{'No Infill':438,'20mm Bamboo':497,'28mm Bamboo':529},
-        '12ft':{'No Infill':471,'20mm Bamboo':540,'28mm Bamboo':578},
-        '14ft':{'No Infill':504,'20mm Bamboo':581,'28mm Bamboo':623},
+        '10ft':{'20mm Bamboo':406,'28mm Bamboo':460,'32mm Bamboo':490},
+        '12ft':{'20mm Bamboo':436,'28mm Bamboo':500,'32mm Bamboo':535},
+        '14ft':{'20mm Bamboo':467,'28mm Bamboo':538,'32mm Bamboo':577},
       },
     },
   },
 };
 
 const SIZES = ['10ft','12ft','14ft'];
-const INFILLS = ['No Infill','20mm Bamboo','28mm Bamboo'];
+const INFILLS = ['20mm Bamboo','28mm Bamboo','32mm Bamboo'];
 const TREATMENTS = ['Galv + Powder Coat','Hot-dip Galvanized','Galv + Painting'];
 
 // ── State ──────────────────────────────────────────────────────────────────────
@@ -321,7 +356,7 @@ Object.keys(MODELS).forEach(m => {
   const model = MODELS[m];
   selectedStyle[m] = model.styles.length ? model.styles[0].id : null;
   selectedSize[m] = '12ft';
-  selectedInfill[m] = '28mm Bamboo';
+  selectedInfill[m] = '20mm Bamboo';
   selectedTreatment[m] = 'Galv + Powder Coat';
   selectedQty[m] = 1;
 });
@@ -375,18 +410,6 @@ function renderModels() {
     const container = document.getElementById('model-'+modelKey);
     container.innerHTML = '';
 
-    // Coming soon placeholder
-    if (model.comingSoon) {
-      container.innerHTML = `
-        <div class="category-title">${model.label} — ${model.series}</div>
-        <div style="text-align:center;padding:40px 20px;color:#aaa;">
-          <div style="font-size:32px;margin-bottom:12px;">&#128295;</div>
-          <div style="font-size:14px;font-weight:500;color:#666;">Sliding Door Fronts</div>
-          <div style="font-size:12px;margin-top:6px;"><span class="tag tag-coming">Coming soon</span> Pricing &amp; styles pending from factory</div>
-        </div>
-      `;
-      return;
-    }
 
     const curStyle = selectedStyle[modelKey];
     const curSize = selectedSize[modelKey];
