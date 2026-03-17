@@ -13,7 +13,7 @@
   .header h1 { font-size: 18px; font-weight: 600; }
   .header span { font-size: 13px; opacity: 0.6; margin-left: 8px; }
 
-  .layout { display: grid; grid-template-columns: 460px 1fr; gap: 0; min-height: calc(100vh - 60px); }
+  .layout { display: grid; grid-template-columns: 480px 1fr; gap: 0; min-height: calc(100vh - 60px); }
 
   .sidebar { background: white; border-right: 1px solid #e0e0e0; padding: 24px; overflow-y: auto; }
   .main { padding: 24px; overflow-y: auto; }
@@ -36,22 +36,18 @@
   .settings-content label { font-size: 12px; }
   .settings-content input { padding: 7px 10px; font-size: 13px; }
 
-  /* Model tabs */
-  .tab-bar { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
-  .tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: white; color: #666; border: none; border-right: 1px solid #e0e0e0; transition: all 0.1s; }
-  .tab:last-child { border-right: none; }
-  .tab.active { background: #1a2f4a; color: white; }
-  .tab.disabled { background: #f4f4f4; color: #bbb; cursor: not-allowed; }
+  /* Category selector */
+  .cat-select { margin-bottom: 16px; }
+  .cat-select select { font-weight: 500; padding: 10px 14px; font-size: 14px; cursor: pointer; background: #f8f9fa; }
 
   /* Style selector */
-  .style-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .style-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 10px; margin-bottom: 16px; }
   .style-card { border: 2px solid #e0e0e0; border-radius: 8px; padding: 8px; cursor: pointer; transition: all 0.15s; text-align: center; background: white; }
   .style-card:hover { border-color: #1a2f4a; }
   .style-card.active { border-color: #1a2f4a; background: #f0f4f8; }
   .style-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 6px; }
   .style-card .style-name { font-size: 11px; font-weight: 500; color: #333; line-height: 1.3; }
   .style-card .style-code { font-size: 10px; color: #999; margin-top: 2px; }
-  .style-card .style-delta { font-size: 10px; color: #888; margin-top: 2px; }
 
   /* Option rows */
   .option-section { margin-bottom: 14px; }
@@ -61,10 +57,6 @@
   .chip:hover { border-color: #1a2f4a; color: #1a2f4a; }
   .chip.active { background: #1a2f4a; color: white; border-color: #1a2f4a; }
   .chip.disabled { background: #f4f4f4; color: #ccc; border-color: #eee; cursor: not-allowed; }
-
-  .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
-  .tag-confirm { background: #fff3cd; color: #856404; }
-  .tag-coming { background: #e8f0fe; color: #1967d2; }
 
   /* Config panel */
   .config-panel { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-top: 8px; }
@@ -158,15 +150,18 @@
     <div class="section">
       <h2>Add Products</h2>
 
-      <div class="tab-bar">
-        <button class="tab active" onclick="showModel('swing',this)">Swing Fronts</button>
-        <button class="tab" onclick="showModel('sliding',this)">Sliding Fronts</button>
-        <button class="tab" onclick="showModel('partition',this)">Partitions</button>
+      <div class="cat-select">
+        <select id="cat-dropdown" onchange="switchCategory(this.value)">
+          <option value="swing">Stall Front &mdash; Swing Door (E-Series)</option>
+          <option value="sliding">Stall Front &mdash; Sliding Door (S-Series)</option>
+          <option value="partition">Partition / Side Panel (D-Series)</option>
+          <option value="dutchDoor">Double Dutch Door (G-Series)</option>
+          <option value="barnDoor">Barn Door (EG-Series)</option>
+          <option value="budgetFront">Budget Front (B-Series)</option>
+        </select>
       </div>
 
-      <div id="model-swing"></div>
-      <div id="model-sliding" style="display:none"></div>
-      <div id="model-partition" style="display:none"></div>
+      <div id="catalog-panel"></div>
     </div>
   </div>
 
@@ -207,12 +202,15 @@
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script>
 // ── Data Model ─────────────────────────────────────────────────────────────────
-// 3 base models, each with style variants. Prices are EXW USD (powder coat).
+// Each category defines its own styles, sizes, infill options, and prices.
+// Prices are EXW USD (powder coated / black powder coated).
 
 const MODELS = {
   swing: {
-    label: 'Stall Front — Swing Door',
+    label: 'Stall Front \u2014 Swing Door',
     series: 'E-Series',
+    sizes: ['10ft','12ft','14ft'],
+    infills: ['20mm Bamboo','28mm Bamboo','32mm Bamboo'],
     styles: [
       { id:'E-01', sku:'TNS-STL-101', name:'Feed window, vertical bars', img:'products/TNS-STL-101.jpg' },
       { id:'E-02', sku:'TNS-STL-102', name:'Straight top bars', img:'products/TNS-STL-102.jpg' },
@@ -224,13 +222,11 @@ const MODELS = {
       { id:'E-08', sku:'TNS-STL-109', name:'Center opening, commercial', img:'products/TNS-STL-109.jpg' },
       { id:'E-09', sku:'TNS-STL-105', name:'Full front, double finials', img:'products/TNS-STL-105.jpg', note:'Mesh middle + hung window' },
     ],
-    // Base prices: E-01/E-02/E-03/E-04/E-05 share base
     basePrices: {
       '10ft':{'20mm Bamboo':528,'28mm Bamboo':568,'32mm Bamboo':587},
       '12ft':{'20mm Bamboo':557,'28mm Bamboo':602,'32mm Bamboo':625},
       '14ft':{'20mm Bamboo':583,'28mm Bamboo':635,'32mm Bamboo':660},
     },
-    // Per-style price overrides
     styleOverrides: {
       'E-06': {
         '10ft':{'20mm Bamboo':535,'28mm Bamboo':575,'32mm Bamboo':595},
@@ -256,8 +252,10 @@ const MODELS = {
   },
 
   sliding: {
-    label: 'Stall Front — Sliding Door',
+    label: 'Stall Front \u2014 Sliding Door',
     series: 'S-Series',
+    sizes: ['10ft','12ft','14ft'],
+    infills: ['20mm Bamboo','28mm Bamboo','32mm Bamboo'],
     styles: [
       { id:'S-01', sku:'TNS-STL-401', name:'Sliding door with yoke', img:'products/TNS-STL-401.jpg' },
       { id:'S-02', sku:'TNS-STL-402', name:'Vertical bars sliding', img:'products/TNS-STL-402.jpg' },
@@ -266,7 +264,6 @@ const MODELS = {
       { id:'S-05', sku:'TNS-STL-405', name:'Sliding with arch top', img:'products/TNS-STL-405.jpg' },
       { id:'S-06', sku:'TNS-STL-406', name:'Sliding, vertical bars alt', img:'products/TNS-STL-406.jpg' },
     ],
-    // Base prices: S-01/S-04/S-05 share base
     basePrices: {
       '10ft':{'20mm Bamboo':555,'28mm Bamboo':605,'32mm Bamboo':630},
       '12ft':{'20mm Bamboo':585,'28mm Bamboo':643,'32mm Bamboo':673},
@@ -292,8 +289,10 @@ const MODELS = {
   },
 
   partition: {
-    label: 'Stable Partition / Side Panel',
+    label: 'Partition / Side Panel',
     series: 'D-Series',
+    sizes: ['10ft','12ft','14ft'],
+    infills: ['20mm Bamboo','28mm Bamboo','32mm Bamboo'],
     styles: [
       { id:'D-01', sku:'TNS-STL-201', name:'Bars top, bamboo bottom', img:'products/TNS-STL-201.jpg' },
       { id:'D-02', sku:'TNS-STL-202', name:'Straight bars', img:'products/TNS-STL-202.jpg' },
@@ -302,7 +301,6 @@ const MODELS = {
       { id:'D-05', sku:'TNS-STL-301', name:'All-black solid', img:'products/TNS-STL-301.jpg' },
       { id:'D-06', sku:'TNS-STL-302', name:'Two-tone', img:'products/TNS-STL-302.jpg' },
     ],
-    // Each D-style has its own pricing
     basePrices: {
       '10ft':{'20mm Bamboo':385,'28mm Bamboo':427,'32mm Bamboo':450},
       '12ft':{'20mm Bamboo':415,'28mm Bamboo':467,'32mm Bamboo':495},
@@ -336,27 +334,85 @@ const MODELS = {
       },
     },
   },
+
+  dutchDoor: {
+    label: 'Double Dutch Door',
+    series: 'G-Series',
+    sizes: ['1.2\u00d72.2m'],
+    infills: ['20mm Bamboo','28mm Bamboo','32mm Bamboo'],
+    styles: [
+      { id:'G-01', sku:'TNS-DD-01', name:'Dutch Door', img:'products/G-01.jpg' },
+      { id:'G-02', sku:'TNS-DD-02', name:'Full wood + V-yoke', img:'products/G-02.jpg' },
+      { id:'G-03', sku:'TNS-DD-03', name:'Tempered Glass Arcuated', img:'products/G-03.jpg' },
+      { id:'G-04', sku:'TNS-DD-04', name:'Arched frame Dutch Door', img:'products/G-04.jpg' },
+      { id:'G-05', sku:'TNS-DD-05', name:'Standard Dutch Door', img:'products/G-05.jpg' },
+    ],
+    basePrices: {
+      '1.2\u00d72.2m':{'20mm Bamboo':480,'28mm Bamboo':510,'32mm Bamboo':540},
+    },
+    styleOverrides: {
+      'G-02': { '1.2\u00d72.2m':{'20mm Bamboo':495,'28mm Bamboo':525,'32mm Bamboo':555} },
+      'G-03': { '1.2\u00d72.2m':{'20mm Bamboo':515,'28mm Bamboo':545,'32mm Bamboo':575} },
+      'G-04': { '1.2\u00d72.2m':{'20mm Bamboo':520,'28mm Bamboo':550,'32mm Bamboo':580} },
+      'G-05': { '1.2\u00d72.2m':{'20mm Bamboo':485,'28mm Bamboo':515,'32mm Bamboo':545} },
+    },
+  },
+
+  barnDoor: {
+    label: 'Barn Door',
+    series: 'EG-Series',
+    sizes: ['2.5\u00d72.5m'],
+    infills: ['20mm Bamboo','28mm Bamboo','32mm Bamboo'],
+    styles: [
+      { id:'EG-05', sku:'TNS-BD-05', name:'Sliding Barn Entry/End Door', img:'products/EG-05.jpg' },
+      { id:'EG-06', sku:'TNS-BD-06', name:'Tempered Glass Barn Door', img:'products/EG-06.jpg' },
+      { id:'EG-07', sku:'TNS-BD-07', name:'Arcuated Tempered Glass', img:'products/EG-07.jpg' },
+    ],
+    basePrices: {
+      '2.5\u00d72.5m':{'20mm Bamboo':1100,'28mm Bamboo':1200,'32mm Bamboo':1250},
+    },
+    styleOverrides: {
+      'EG-06': { '2.5\u00d72.5m':{'20mm Bamboo':1100,'28mm Bamboo':1100,'32mm Bamboo':1150} },
+    },
+  },
+
+  budgetFront: {
+    label: 'Budget Front',
+    series: 'B-Series',
+    sizes: ['10ft','12ft','14ft'],
+    infills: ['No Infill','25mm Pine'],
+    note: 'Pine color is Yellow. Black powder coated frame.',
+    styles: [
+      { id:'B-01', sku:'TNS-BF-01', name:'Wire Mesh + Pine', img:'products/B-01.jpg' },
+      { id:'B-02', sku:'TNS-BF-02', name:'Pine front', img:'products/B-02.jpg' },
+      { id:'B-03', sku:'TNS-BF-03', name:'Pine Wood + V Yoke', img:'products/B-03.jpg' },
+    ],
+    basePrices: {
+      '10ft':{'No Infill':335,'25mm Pine':445},
+      '12ft':{'No Infill':358,'25mm Pine':466},
+      '14ft':{'No Infill':376,'25mm Pine':488},
+    },
+    styleOverrides: {},
+  },
 };
 
-const SIZES = ['10ft','12ft','14ft'];
-const INFILLS = ['20mm Bamboo','28mm Bamboo','32mm Bamboo'];
 const TREATMENTS = ['Galv + Powder Coat','Hot-dip Galvanized','Galv + Painting'];
 
 // ── State ──────────────────────────────────────────────────────────────────────
-let activeModel = 'swing';
-let selectedStyle = {}; // per model: style id
-let selectedSize = {};  // per model
-let selectedInfill = {}; // per model
-let selectedTreatment = {}; // per model
-let selectedQty = {}; // per model
+let activeCategory = 'swing';
+let selectedStyle = {};
+let selectedSize = {};
+let selectedInfill = {};
+let selectedTreatment = {};
+let selectedQty = {};
 let quoteLines = [];
 
-// Init defaults
+// Init defaults per category
 Object.keys(MODELS).forEach(m => {
   const model = MODELS[m];
   selectedStyle[m] = model.styles.length ? model.styles[0].id : null;
-  selectedSize[m] = '12ft';
-  selectedInfill[m] = '20mm Bamboo';
+  selectedSize[m] = model.sizes[0];
+  selectedInfill[m] = model.infills[0];
   selectedTreatment[m] = 'Galv + Powder Coat';
   selectedQty[m] = 1;
 });
@@ -378,8 +434,7 @@ function calcRetail(exwUSD) {
 function getExwPrice(modelKey, styleId, size, infill) {
   const model = MODELS[modelKey];
   if (!model) return 0;
-  // Check style overrides first, then base prices
-  const prices = model.styleOverrides[styleId] || model.basePrices;
+  const prices = (model.styleOverrides && model.styleOverrides[styleId]) || model.basePrices;
   return prices[size]?.[infill] || 0;
 }
 
@@ -387,14 +442,10 @@ function getStyleObj(modelKey, styleId) {
   return MODELS[modelKey].styles.find(s => s.id === styleId);
 }
 
-// ── Model tab switching ────────────────────────────────────────────────────────
-function showModel(modelKey, el) {
-  activeModel = modelKey;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  ['swing','sliding','partition'].forEach(m => {
-    document.getElementById('model-'+m).style.display = m===modelKey ? '' : 'none';
-  });
+// ── Category switching ─────────────────────────────────────────────────────────
+function switchCategory(cat) {
+  activeCategory = cat;
+  renderCatalog();
 }
 
 function toggleSettings() {
@@ -403,125 +454,163 @@ function toggleSettings() {
   document.getElementById('settings-arrow').textContent = open ? '\u25B2' : '\u25BC';
 }
 
-// ── Render model panels ────────────────────────────────────────────────────────
-function renderModels() {
-  Object.keys(MODELS).forEach(modelKey => {
-    const model = MODELS[modelKey];
-    const container = document.getElementById('model-'+modelKey);
-    container.innerHTML = '';
+// ── Render catalog panel ───────────────────────────────────────────────────────
+function renderCatalog() {
+  const modelKey = activeCategory;
+  const model = MODELS[modelKey];
+  const container = document.getElementById('catalog-panel');
+  container.innerHTML = '';
 
+  const curStyle = selectedStyle[modelKey];
+  const curSize = selectedSize[modelKey];
+  const curInfill = selectedInfill[modelKey];
+  const curTreatment = selectedTreatment[modelKey];
+  const curQty = selectedQty[modelKey];
 
-    const curStyle = selectedStyle[modelKey];
-    const curSize = selectedSize[modelKey];
-    const curInfill = selectedInfill[modelKey];
-    const curTreatment = selectedTreatment[modelKey];
-    const curQty = selectedQty[modelKey];
+  // Category title
+  const title = document.createElement('div');
+  title.className = 'category-title';
+  title.textContent = model.label + ' \u2014 ' + model.series;
+  if (model.note) {
+    const noteEl = document.createElement('span');
+    noteEl.style.cssText = 'display:block;font-weight:400;font-size:11px;color:#b08000;margin-top:4px;text-transform:none;letter-spacing:0;';
+    noteEl.textContent = model.note;
+    title.appendChild(noteEl);
+  }
+  container.appendChild(title);
 
-    // Category title
-    const title = document.createElement('div');
-    title.className = 'category-title';
-    title.textContent = model.label + ' \u2014 ' + model.series;
-    container.appendChild(title);
+  // Style grid
+  const grid = document.createElement('div');
+  grid.className = 'style-grid';
+  model.styles.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'style-card' + (s.id === curStyle ? ' active' : '');
+    card.onclick = () => {
+      selectedStyle[modelKey] = s.id;
+      // Re-validate size & infill for new style
+      const prices = (model.styleOverrides && model.styleOverrides[s.id]) || model.basePrices;
+      if (!prices[selectedSize[modelKey]]) {
+        selectedSize[modelKey] = Object.keys(prices)[0] || model.sizes[0];
+      }
+      const sizeP = prices[selectedSize[modelKey]] || {};
+      if (!sizeP[selectedInfill[modelKey]]) {
+        selectedInfill[modelKey] = Object.keys(sizeP)[0] || model.infills[0];
+      }
+      renderCatalog();
+    };
+    card.innerHTML = `
+      <img src="${s.img}" alt="${s.name}" onerror="this.style.background='#eee';this.src=''">
+      <div class="style-name">${s.name}</div>
+      <div class="style-code">${s.id}</div>
+    `;
+    grid.appendChild(card);
+  });
+  container.appendChild(grid);
 
-    // Style grid
-    const grid = document.createElement('div');
-    grid.className = 'style-grid';
-    model.styles.forEach(s => {
-      const card = document.createElement('div');
-      card.className = 'style-card' + (s.id === curStyle ? ' active' : '');
-      card.onclick = () => { selectedStyle[modelKey] = s.id; renderModels(); };
-      card.innerHTML = `
-        <img src="${s.img}" alt="${s.name}" onerror="this.style.background='#eee';this.src=''">
-        <div class="style-name">${s.name}</div>
-        <div class="style-code">${s.id}${s.confirm ? ' <span class="tag tag-confirm">Confirm</span>' : ''}</div>
-      `;
-      grid.appendChild(card);
-    });
-    container.appendChild(grid);
+  // Config panel
+  const panel = document.createElement('div');
+  panel.className = 'config-panel';
 
-    // Config panel
-    const panel = document.createElement('div');
-    panel.className = 'config-panel';
+  const styleObj = getStyleObj(modelKey, curStyle);
+  const exw = getExwPrice(modelKey, curStyle, curSize, curInfill);
+  const retail = exw ? calcRetail(exw) : 0;
 
-    const styleObj = getStyleObj(modelKey, curStyle);
-    const exw = getExwPrice(modelKey, curStyle, curSize, curInfill);
-    const retail = exw ? calcRetail(exw) : 0;
-
-    panel.innerHTML = `
-      <div class="config-header">
-        <img src="${styleObj.img}" alt="${styleObj.name}" onerror="this.style.background='#eee';this.src=''">
-        <div>
-          <div class="config-title">${styleObj.name}</div>
-          <div class="config-sub">${styleObj.sku} &middot; ${styleObj.id}${styleObj.note ? ' &middot; '+styleObj.note : ''}</div>
-        </div>
+  let configHTML = `
+    <div class="config-header">
+      <img src="${styleObj.img}" alt="${styleObj.name}" onerror="this.style.background='#eee';this.src=''">
+      <div>
+        <div class="config-title">${styleObj.name}</div>
+        <div class="config-sub">${styleObj.sku} &middot; ${styleObj.id}${styleObj.note ? ' &middot; '+styleObj.note : ''}</div>
       </div>
+    </div>
+  `;
 
+  // Size selector (hide if only one size)
+  if (model.sizes.length > 1) {
+    configHTML += `
       <div class="option-section">
         <div class="option-label">Size</div>
-        <div class="chip-row" id="chips-size-${modelKey}">
-          ${SIZES.map(s => {
-            const avail = (model.styleOverrides[curStyle] || model.basePrices)[s];
+        <div class="chip-row">
+          ${model.sizes.map(s => {
+            const prices = (model.styleOverrides && model.styleOverrides[curStyle]) || model.basePrices;
+            const avail = prices[s];
             return `<span class="chip ${s===curSize?'active':''} ${!avail?'disabled':''}"
               onclick="${avail ? `selectSize('${modelKey}','${s}')` : ''}">${s}</span>`;
           }).join('')}
         </div>
       </div>
-
+    `;
+  } else {
+    configHTML += `
       <div class="option-section">
-        <div class="option-label">Infill Material</div>
-        <div class="chip-row" id="chips-infill-${modelKey}">
-          ${INFILLS.map(i => {
-            const prices = (model.styleOverrides[curStyle] || model.basePrices)[curSize] || {};
-            const avail = prices[i] !== undefined;
-            return `<span class="chip ${i===curInfill?'active':''} ${!avail?'disabled':''}"
-              onclick="${avail ? `selectInfill('${modelKey}','${i}')` : ''}">${i}</span>`;
-          }).join('')}
-        </div>
-      </div>
-
-      <div class="option-section">
-        <div class="option-label">Surface Treatment</div>
-        <div class="chip-row">
-          ${TREATMENTS.map(t => {
-            const isBase = t === 'Galv + Powder Coat';
-            return `<span class="chip ${t===curTreatment?'active':''} ${!isBase?'disabled':''}"
-              onclick="${isBase ? `selectTreatment('${modelKey}','${t}')` : ''}">${t}${!isBase?' (TBD)':''}</span>`;
-          }).join('')}
-        </div>
-      </div>
-
-      <div class="qty-row">
-        <label>Qty</label>
-        <input type="number" min="1" value="${curQty}" style="width:55px" oninput="selectQty('${modelKey}',this.value)">
-        <span class="price-preview">${retail ? '$'+retail.toLocaleString('en-CA')+' CAD/ea' : '\u2014'}</span>
-        <button class="add-btn" onclick="addLine('${modelKey}')" ${!exw?'disabled':''}>+ Add</button>
+        <div class="option-label">Size</div>
+        <div class="chip-row"><span class="chip active">${model.sizes[0]}</span></div>
       </div>
     `;
+  }
 
-    container.appendChild(panel);
-  });
+  // Infill selector
+  configHTML += `
+    <div class="option-section">
+      <div class="option-label">Infill Material</div>
+      <div class="chip-row">
+        ${model.infills.map(i => {
+          const prices = ((model.styleOverrides && model.styleOverrides[curStyle]) || model.basePrices)[curSize] || {};
+          const avail = prices[i] !== undefined;
+          return `<span class="chip ${i===curInfill?'active':''} ${!avail?'disabled':''}"
+            onclick="${avail ? `selectInfill('${modelKey}','${i}')` : ''}">${i}</span>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
+  // Surface treatment
+  configHTML += `
+    <div class="option-section">
+      <div class="option-label">Surface Treatment</div>
+      <div class="chip-row">
+        ${TREATMENTS.map(t => {
+          const isBase = t === 'Galv + Powder Coat';
+          return `<span class="chip ${t===curTreatment?'active':''} ${!isBase?'disabled':''}"
+            onclick="${isBase ? `selectTreatment('${modelKey}','${t}')` : ''}">${t}${!isBase?' (TBD)':''}</span>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
+  // Qty + price + add
+  configHTML += `
+    <div class="qty-row">
+      <label>Qty</label>
+      <input type="number" min="1" value="${curQty}" style="width:55px" oninput="selectQty('${modelKey}',this.value)">
+      <span class="price-preview">${retail ? '$'+retail.toLocaleString('en-CA')+' CAD/ea' : '\u2014'}</span>
+      <button class="add-btn" onclick="addLine('${modelKey}')" ${!exw?'disabled':''}>+ Add to Quote</button>
+    </div>
+  `;
+
+  panel.innerHTML = configHTML;
+  container.appendChild(panel);
 }
 
 // ── Selection handlers ─────────────────────────────────────────────────────────
 function selectSize(modelKey, size) {
   selectedSize[modelKey] = size;
-  // Validate infill still available
   const model = MODELS[modelKey];
-  const prices = (model.styleOverrides[selectedStyle[modelKey]] || model.basePrices)[size] || {};
+  const prices = ((model.styleOverrides && model.styleOverrides[selectedStyle[modelKey]]) || model.basePrices)[size] || {};
   if (!prices[selectedInfill[modelKey]]) {
-    selectedInfill[modelKey] = Object.keys(prices)[0] || 'No Infill';
+    selectedInfill[modelKey] = Object.keys(prices)[0] || model.infills[0];
   }
-  renderModels();
+  renderCatalog();
 }
 
 function selectInfill(modelKey, infill) {
   selectedInfill[modelKey] = infill;
-  renderModels();
+  renderCatalog();
 }
 
 function selectTreatment(modelKey, treatment) {
   selectedTreatment[modelKey] = treatment;
-  renderModels();
+  renderCatalog();
 }
 
 function selectQty(modelKey, val) {
@@ -529,7 +618,7 @@ function selectQty(modelKey, val) {
 }
 
 function refreshAll() {
-  renderModels();
+  renderCatalog();
   renderQuote();
 }
 
@@ -548,6 +637,7 @@ function addLine(modelKey) {
   quoteLines.push({
     id: Date.now(),
     modelKey, styleId,
+    category: model.label,
     sku: style.sku, name: style.name, jh: styleId, img: style.img,
     size, infill, treatment, qty,
     unitPrice: retail,
@@ -734,11 +824,9 @@ async function generatePDF() {
       page.drawText(l.sku+'  \u00B7  '+l.jh, { x:92, y:y-28, size:8, font:fontR, color:grey });
       page.drawText(l.size, { x:280, y:y-20, size:9, font:fontR, color:black });
 
-      // Truncate infill for PDF
       const infillShort = l.infill === 'No Infill' ? 'None' : l.infill;
       page.drawText(infillShort, { x:320, y:y-20, size:9, font:fontR, color:black });
 
-      // Truncate treatment for PDF
       const treatShort = l.treatment.replace('Galv + ','').replace('Galvanized','Galv');
       page.drawText(treatShort, { x:400, y:y-20, size:8, font:fontR, color:black });
 
@@ -819,7 +907,7 @@ function drawFooter(page, W, H, fontR, grey, gold, rgb) {
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 document.getElementById('quote-date').textContent = new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
-renderModels();
+renderCatalog();
 </script>
 </body>
 </html>
